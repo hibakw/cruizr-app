@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUIZR | Campus Wheels & Self-Drive Road Trips for College Students</title>
+  <meta name="description" content="Affordable self-drive car rentals for college students and young adults. Zero security deposit, student discounts, split-fare calculator, and keyless app unlock." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#FFE600',
+              amber: '#FFB703',
+              cyan: '#60EFFF',
+              purple: '#9D4EDD',
+              dark: '#07090E',
+              darker: '#0B0F19',
+              card: '#121826'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Custom Theme CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
+
+  <!-- =========================================================================
+       1. NAVIGATION BAR
+       ========================================================================= -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-6">
+        <a href="#hero-section" class="flex items-center gap-2 group" aria-label="CRUIZR Home">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-xl shadow-lg shadow-[#FFE600]/30 group-hover:scale-105 transition">
+            <i data-lucide="zap" class="w-6 h-6 fill-black text-black"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black tracking-wider text-white font-heading">CRUIZR</span>
+              <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-[#FFE600]/20 text-[#FFE600] border border-[#FFE600]/40 tracking-wider">YOUTH</span>
+            </div>
+            <p class="text-[10px] text-gray-400 font-medium tracking-tight -mt-1">Rent • Ride • Roadtrip</p>
+          </div>
+        </a>
+
+        <!-- Campus / City Switcher Pill -->
+        <button id="campus-dropdown-btn" type="button" aria-haspopup="dialog" aria-expanded="false" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900/90 border border-gray-700/80 hover:border-[#FFE600] transition group focus:outline-none focus:ring-2 focus:ring-[#FFE600]">
+          <div class="w-6 h-6 rounded-full bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+          </div>
+          <div class="text-left">
+            <p class="text-[10px] text-gray-400 font-semibold uppercase">Campus Hub</p>
+            <p id="current-campus-label" class="text-xs font-bold text-white group-hover:text-[#FFE600] transition">Bangalore (Christ Univ)</p>
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#FFE600] transition ml-1"></i>
+        </button>
+      </div>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold text-gray-300" aria-label="Main Navigation">
+        <a href="#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
+        </a>
+        <a href="#split-calculator" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="calculator" class="w-4 h-4 text-[#FFE600]"></i> Split Bill
+        </a>
+        <a href="#host-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="badge-percent" class="w-4 h-4 text-amber-400"></i> Host & Earn
+        </a>
+        <a href="#roadtrips-section" class="hover:text-white transition">Road Trips</a>
+        <a href="#faqs-section" class="hover:text-white transition">FAQs</a>
+      </nav>
+
+      <!-- Right CTAs & Dynamic Auth Container -->
+      <div id="auth-nav-container" class="flex items-center gap-3">
+        <!-- Rendered dynamically by app.js (Logged Out vs Logged In state) -->
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-drawer" class="fixed inset-y-0 right-0 z-50 w-72 bg-[#0D111A] border-l border-gray-800 p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl" role="dialog" aria-modal="true" aria-label="Mobile Navigation Drawer">
+    <div>
+      <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+        <span class="font-bold text-white tracking-wider">CRUIZR MENU</span>
+        <button id="close-mobile-drawer" type="button" aria-label="Close mobile menu" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+      <div class="mt-6 flex flex-col gap-4 text-sm font-semibold">
+        <button id="mobile-campus-btn" type="button" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-[#FFE600] text-left">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Switch Campus Hub
+        </button>
+        <a href="#fleet-section" class="mobile-nav-link flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-gray-200">
+          <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
+        </a>
+        <a href="#split-calculator" class="mobile-nav-link flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-gray-200">
+          <i data-lucide="calculator" class="w-4 h-4 text-[#FFE600]"></i> Split Fare Calculator
+        </a>
+        <a href="#host-section" class="mobile-nav-link flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-gray-200">
+          <i data-lucide="badge-percent" class="w-4 h-4 text-amber-400"></i> Student Host & Earn
+        </a>
+        <a href="#roadtrips-section" class="mobile-nav-link flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-gray-200">
+          <i data-lucide="compass" class="w-4 h-4 text-purple-400"></i> Road Trip Guides
+        </a>
+        <a href="#faqs-section" class="mobile-nav-link flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 text-gray-200">
+          <i data-lucide="help-circle" class="w-4 h-4 text-amber-400"></i> FAQs
+        </a>
+      </div>
+    </div>
+    <div id="mobile-auth-btn-container" class="pt-6 border-t border-gray-800">
+      <!-- Dynamic auth button for mobile -->
+    </div>
+  </div>
+
+  <main class="flex-1">
+
+    <!-- =========================================================================
+         2. HERO SECTION & TRIP BOOKING WIDGET
+         ========================================================================= -->
+    <section id="hero-section" class="relative pt-12 pb-20 overflow-hidden bg-radial-hero">
+      <!-- Ambient Glow Orbs -->
+      <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-[#FFE600]/15 via-[#FFB703]/15 to-[#9D4EDD]/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Hero Header Copy (Strict Single H1) -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-900/90 border border-[#FFE600]/40 shadow-lg mb-4">
+            <span class="w-2 h-2 rounded-full bg-[#FFE600] pulse-dot"></span>
+            <span class="text-xs font-bold text-[#FFE600] uppercase tracking-wider">#1 Campus Self-Drive Platform</span>
+            <span class="text-gray-500">•</span>
+            <span class="text-xs font-medium text-gray-300">Zero Security Deposit</span>
+          </div>
+
+          <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight mb-4 font-heading">
+            Your Campus Wheels. <br class="hidden sm:inline" />
+            <span class="text-gradient-lime">Your Weekend Vibes.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+            Affordable self-drive cars tailored for college budgets. Split the bill with friends, unlock keyless via app, and hit the road in minutes.
+          </p>
+        </div>
+
+        <!-- Hero Booking Engine Card -->
+        <div class="max-w-4xl mx-auto glass-card rounded-3xl p-5 sm:p-7 border border-gray-800 shadow-2xl relative">
+          
+          <!-- Mode Tabs -->
+          <div class="flex items-center gap-2 pb-5 border-b border-gray-800 overflow-x-auto no-scrollbar" role="tablist" aria-label="Booking Mode Tabs">
+            <button type="button" class="hero-tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border transition flex items-center gap-2 whitespace-nowrap bg-[#FFE600]/15 text-[#FFE600] border-[#FFE600]" data-tab="weekend" role="tab" aria-selected="true">
+              <span>🚗</span> Weekend Squad Roadtrip
+            </button>
+            <button type="button" class="hero-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-gray-400 hover:text-white border border-transparent transition flex items-center gap-2 whitespace-nowrap" data-tab="night" role="tab" aria-selected="false">
+              <span>🌙</span> Midnight Pack (8PM - 6AM)
+            </button>
+            <button type="button" class="hero-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-gray-400 hover:text-white border border-transparent transition flex items-center gap-2 whitespace-nowrap" data-tab="hourly" role="tab" aria-selected="false">
+              <span>⏱️</span> Quick Bunk / Hourly
+            </button>
+            <button type="button" class="hero-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-gray-400 hover:text-white border border-transparent transition flex items-center gap-2 whitespace-nowrap" data-tab="semester" role="tab" aria-selected="false">
+              <span>🏖️</span> Semester Break
+            </button>
+          </div>
+
+          <!-- Dynamic Tab Highlight Banner -->
+          <div id="tab-dynamic-note" class="my-4 px-4 py-2 rounded-xl bg-gray-900/80 border border-gray-800 text-xs text-gray-300 flex items-center gap-2">
+            ⚡ <strong>Weekend Squad Pack:</strong> Zero Security Deposit with College ID!
+          </div>
+
+          <!-- Booking Input Fields Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-2">
+            
+            <!-- Campus / Pickup Location -->
+            <div class="md:col-span-5 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition cursor-pointer" id="hero-hub-picker-trigger">
+              <label for="hero-pickup-location" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 cursor-pointer">Pick-up Campus Hub / Zone</label>
+              <div class="flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-[#FFE600] flex-shrink-0"></i>
+                <input type="text" id="hero-pickup-location" value="Christ University & Koramangala Hub" readonly class="w-full bg-transparent text-sm font-bold text-white focus:outline-none cursor-pointer" />
+              </div>
+            </div>
+
+            <!-- Trip Dates -->
+            <div class="md:col-span-4 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition">
+              <label for="hero-dates-input" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Dates (Fri 10:00 AM ➔ Sun 10:00 PM)</label>
+              <div class="flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-[#FFE600] flex-shrink-0"></i>
+                <input type="text" id="hero-dates-input" value="This Weekend (2 Days)" readonly class="w-full bg-transparent text-sm font-bold text-white focus:outline-none cursor-default" />
+              </div>
+            </div>
+
+            <!-- Search Action CTA -->
+            <div class="md:col-span-3 flex items-stretch">
+              <button id="hero-search-btn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#FFE600] to-[#FF9900] text-[#07090E] font-black text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/25 flex items-center justify-center gap-2">
+                <i data-lucide="search" class="w-4 h-4"></i> Find Cars
+              </button>
+            </div>
+          </div>
+
+          <!-- Doorstep Delivery Toggle & Quick Perks -->
+          <div class="mt-5 pt-4 border-t border-gray-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <label class="flex items-center gap-2 cursor-pointer text-gray-300 hover:text-white">
+              <input type="checkbox" id="hero-doorstep-toggle" checked class="w-4 h-4 rounded text-[#FFE600] bg-gray-800 border-gray-700 focus:ring-0" />
+              <span>Deliver sanitized car directly to my Hostel / PG gate (+₹249)</span>
+            </label>
+
+            <div class="flex items-center gap-4 text-gray-400 text-[11px]">
+              <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#FFE600]"></i> Zero Deposit</span>
+              <span class="flex items-center gap-1"><i data-lucide="music" class="w-3.5 h-3.5 text-[#FFE600]"></i> Aux / Bluetooth Ready</span>
+              <span class="flex items-center gap-1"><i data-lucide="credit-card" class="w-3.5 h-3.5 text-purple-400"></i> UPI Accepted</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3. PROMOTIONS & STUDENT COUPONS RAIL
+         ========================================================================= -->
+    <section class="py-6 border-y border-gray-800/60 bg-[#090D15]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🔥</span>
+            <p class="text-sm font-bold text-white uppercase tracking-wider">Trending Student Offers & Promo Codes</p>
+          </div>
+          <span class="text-xs text-gray-400">Click any code to apply automatically</span>
+        </div>
+
+        <!-- Horizontal Scrollable Promo Cards -->
+        <div id="promo-carousel" class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          <!-- Populated by data.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. CAR FLEET & LIVE FILTER ENGINE
+         ========================================================================= -->
+    <section id="fleet-section" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#FFE600]/20 text-[#FFE600] border border-[#FFE600]/40">LIVE CAMPUS FLEET</span>
+            <span id="cars-count-label" class="text-xs text-gray-400">Showing 8 cars ready on campus</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+            Choose Your <span class="text-gradient-lime">Ride</span>
+          </h2>
+        </div>
+
+        <!-- Sort Select -->
+        <div class="flex items-center gap-3">
+          <label for="filter-sort" class="text-xs font-semibold text-gray-400">Sort by:</label>
+          <select id="filter-sort" class="px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-xs font-bold text-white focus:outline-none focus:border-[#FFE600]">
+            <option value="recommended">Recommended (Campus Favorite)</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Top Rated (4.9+ ★)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filter Controls Bar -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 mb-8 border border-gray-800 space-y-4">
+        
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <button type="button" class="category-pill active px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-[#FFE600] text-[#07090E]" data-category="all">
+            ⚡ All Rides
+          </button>
+          <button type="button" class="category-pill px-4 py-2 rounded-xl text-xs font-bold bg-gray-800/80 text-gray-300 hover:text-white transition whitespace-nowrap" data-category="pocket">
+            💸 Pocket Savers (₹99/hr)
+          </button>
+          <button type="button" class="category-pill px-4 py-2 rounded-xl text-xs font-bold bg-gray-800/80 text-gray-300 hover:text-white transition whitespace-nowrap" data-category="suv">
+            🚙 Squad SUVs & Thar
+          </button>
+          <button type="button" class="category-pill px-4 py-2 rounded-xl text-xs font-bold bg-gray-800/80 text-gray-300 hover:text-white transition whitespace-nowrap" data-category="sedan">
+            🕶️ Vibe Sedans
+          </button>
+          <button type="button" class="category-pill px-4 py-2 rounded-xl text-xs font-bold bg-gray-800/80 text-gray-300 hover:text-white transition whitespace-nowrap" data-category="ev">
+            🔋 Electric EV (Zero Fuel)
+          </button>
+          <button type="button" class="category-pill px-4 py-2 rounded-xl text-xs font-bold bg-gray-800/80 text-gray-300 hover:text-white transition whitespace-nowrap" data-category="luxury">
+            ✨ Flex / Luxury
+          </button>
+        </div>
+
+        <!-- Secondary Filter Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-gray-800/80 text-xs">
+          
+          <!-- Transmission Filter -->
+          <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
+            <label for="filter-transmission" class="text-gray-400 font-semibold">Transmission:</label>
+            <select id="filter-transmission" class="bg-transparent text-white font-bold focus:outline-none">
+              <option value="all" class="bg-gray-900">All (Manual & Auto)</option>
+              <option value="manual" class="bg-gray-900">Manual</option>
+              <option value="automatic" class="bg-gray-900">Automatic</option>
+            </select>
+          </div>
+
+          <!-- Fuel Filter -->
+          <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
+            <label for="filter-fuel" class="text-gray-400 font-semibold">Fuel Type:</label>
+            <select id="filter-fuel" class="bg-transparent text-white font-bold focus:outline-none">
+              <option value="all" class="bg-gray-900">All Fuels</option>
+              <option value="petrol" class="bg-gray-900">Petrol</option>
+              <option value="diesel" class="bg-gray-900">Diesel</option>
+              <option value="electric" class="bg-gray-900">Electric (EV)</option>
+            </select>
+          </div>
+
+          <!-- Max Price Slider -->
+          <div class="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <label for="price-range-slider" class="text-gray-400 font-semibold">Max Daily Budget:</label>
+                <span id="price-range-value" class="font-bold text-[#FFE600]">₹7,000/day</span>
+              </div>
+              <input type="range" id="price-range-slider" min="1200" max="7000" step="200" value="7000" class="w-full accent-[#FFE600]" aria-label="Max Daily Budget Range Slider" />
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Cars Grid -->
+      <div id="fleet-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         5. STANDALONE "SPLIT THE BILL" SQUAD CALCULATOR
+         ========================================================================= -->
+    <section id="split-calculator" class="py-16 bg-[#090D15] border-y border-gray-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="glass-card rounded-3xl p-6 sm:p-10 border border-gray-800 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-[#FFE600]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Left: Pitch -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/10 border border-[#FFE600]/30 text-[#FFE600] text-xs font-bold">
+              <i data-lucide="calculator" class="w-3.5 h-3.5"></i> SQUAD SPLIT CALCULATOR
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+              Road Trips Are Cheaper Than <span class="text-gradient-purple">Movie Tickets</span>
+            </h2>
+            <p class="text-sm text-gray-400 leading-relaxed">
+              Why take crowded public transport when you can split a self-drive Thar, SUV, or Swift with 4–7 hostel mates for as low as ₹210 per person?
+            </p>
+
+            <div class="space-y-2 pt-2 text-xs text-gray-300">
+              <div class="flex items-center gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-[#FFE600]"></i>
+                <span>One-tap WhatsApp split message generator</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-[#FFE600]"></i>
+                <span>Includes estimated fuel + highway toll charges</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Calculator Widget -->
+          <div class="lg:col-span-6 p-6 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-5">
+            <div>
+              <div class="flex justify-between text-xs font-bold text-white mb-2">
+                <label for="calc-friend-slider" class="text-gray-400 uppercase">Number of Friends Traveling:</label>
+                <span id="calc-friend-count" class="text-[#FFE600] font-mono">4 Friends</span>
+              </div>
+              <input type="range" id="calc-friend-slider" min="1" max="7" value="4" class="w-full accent-[#FFE600]" aria-label="Number of Friends Traveling" />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold text-white mb-2">
+                <label for="calc-days-slider" class="text-gray-400 uppercase">Trip Duration:</label>
+                <span id="calc-days-count" class="text-[#FFE600] font-mono">2 Days</span>
+              </div>
+              <input type="range" id="calc-days-slider" min="1" max="5" value="2" class="w-full accent-[#FFE600]" aria-label="Trip Duration in Days" />
+            </div>
+
+            <!-- Result Box -->
+            <div class="p-4 rounded-xl bg-gradient-to-r from-[#FFE600]/15 to-[#FF9900]/15 border border-[#FFE600]/40 flex items-center justify-between">
+              <div>
+                <p class="text-[11px] text-gray-300 font-semibold">YOUR COST PER PERSON</p>
+                <p class="text-xs text-gray-400">Total estimated ₹<span id="calc-total-est-result">5,998</span> (Rent + Fuel + Toll)</p>
+              </div>
+              <div class="text-right">
+                <p id="calc-per-person-result" class="text-3xl font-black text-white font-heading text-gradient-lime">₹1,500</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase">All Inclusive</p>
+              </div>
+            </div>
+
+            <a href="#fleet-section" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
+              Find Cars For This Squad Size <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. STUDENT HOST & EARN SECTION
+         ========================================================================= -->
+    <section id="host-section" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card rounded-3xl p-6 sm:p-10 border border-gray-800 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Left info -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950 border border-amber-500/40 text-amber-300 text-xs font-bold">
+            <i data-lucide="coins" class="w-3.5 h-3.5"></i> CAMPUS HOST PROGRAM
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+            Got a Car at Home or Campus? <br />
+            <span class="text-gradient-lime">Earn ₹35,000+ / Month</span>
+          </h2>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            Turn your car into a passive income stream when you're sitting in class or during semester breaks. Full ₹1 Crore comprehensive insurance + keyless smart IoT device installed for free.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+            <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
+              <p class="font-bold text-white">🛡️ ₹1 Cr Insurance</p>
+              <p class="text-[11px] text-gray-400 mt-0.5">Zero liability for host</p>
+            </div>
+            <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
+              <p class="font-bold text-white">💸 Weekly UPI Payouts</p>
+              <p class="text-[11px] text-gray-400 mt-0.5">Direct to your bank/UPI</p>
+            </div>
+          </div>
+
+          <button id="host-cta-btn" type="button" class="open-host-modal-btn px-6 py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-black text-xs uppercase tracking-wider hover:brightness-110 transition shadow-lg shadow-[#FFE600]/20 flex items-center gap-2">
+            List Your Car Free →
+          </button>
+        </div>
+
+        <!-- Right: Earnings Calculator -->
+        <div class="lg:col-span-6 p-6 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-5">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Host Earnings Estimator</h3>
+          
+          <!-- Car Segment Selector -->
+          <div>
+            <p class="text-xs font-semibold text-gray-400 mb-2">Select Your Vehicle Segment:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" class="host-car-pill p-2 rounded-xl text-xs font-bold text-center border border-gray-700 bg-gray-800 text-gray-300" data-type="hatchback">Hatchback</button>
+              <button type="button" class="host-car-pill p-2 rounded-xl text-xs font-bold text-center border border-gray-700 bg-gray-800 text-gray-300" data-type="sedan">Sedan</button>
+              <button type="button" class="host-car-pill active p-2 rounded-xl text-xs font-bold text-center border border-[#FFE600] bg-[#FFE600] text-[#07090E]" data-type="suv">SUV</button>
+              <button type="button" class="host-car-pill p-2 rounded-xl text-xs font-bold text-center border border-gray-700 bg-gray-800 text-gray-300" data-type="luxury">Luxury</button>
+            </div>
+          </div>
+
+          <!-- Sharing Days Slider -->
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-2">
+              <label for="host-days-slider" class="text-gray-400">Sharing Days Per Month:</label>
+              <span id="host-days-label" class="text-[#FFE600] font-mono">15 Days / Month</span>
+            </div>
+            <input type="range" id="host-days-slider" min="5" max="30" value="15" class="w-full accent-[#FFE600]" aria-label="Host Sharing Days Per Month" />
+          </div>
+
+          <!-- Estimated Monthly Earnings -->
+          <div class="p-4 rounded-xl bg-gray-800/80 border border-gray-700 flex items-center justify-between">
+            <div>
+              <p class="text-[11px] text-gray-400 font-semibold">PROJECTED MONTHLY EARNINGS</p>
+              <p class="text-xs text-amber-400 font-bold">Transferred directly via UPI</p>
+            </div>
+            <p id="host-earnings-result" class="text-3xl font-black text-white font-heading text-gradient-lime">₹28,125</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. CURATED ROAD TRIPS & CAMPUS ITINERARIES
+         ========================================================================= -->
+    <section id="roadtrips-section" class="py-16 bg-[#090D15] border-y border-gray-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-300 border border-purple-500/30">ROADTRIP BIBLE</span>
+            <h2 class="text-3xl sm:text-4xl font-black text-white mt-2 font-heading">
+              Top Student <span class="text-gradient-purple">Weekend Getaways</span>
+            </h2>
+          </div>
+          <p class="text-xs text-gray-400 max-w-sm">Curated driving routes tested by student travelers with Spotify playlists & recommended car matches.</p>
+        </div>
+
+        <div id="roadtrips-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Rendered dynamically via app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. WHY GEN-Z CHOOSES CRUIZR (USPs)
+         ========================================================================= -->
+    <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+          Built For Students. <br />
+          <span class="text-gradient-lime">Zero Hassle. Zero Red Tape.</span>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="glass-card p-6 rounded-2xl border border-gray-800 hover:border-[#FFE600]/40 transition space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">Zero Security Deposit</h3>
+          <p class="text-xs text-gray-400 leading-relaxed">
+            Unlike traditional rentals that block ₹5,000–₹10,000 on your card, CRUIZR requires ₹0 deposit for all verified college students.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-gray-800 hover:border-[#FFE600]/40 transition space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
+            <i data-lucide="smartphone" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">100% Keyless App Unlock</h3>
+          <p class="text-xs text-gray-400 leading-relaxed">
+            No meeting strangers or waiting for physical keys. Walk up to your car, tap 'Unlock' on your phone, and drive away anytime 24/7.
+          </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-gray-800 hover:border-purple-500/40 transition space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center text-purple-400">
+            <i data-lucide="credit-card" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">No Credit Card Needed</h3>
+          <p class="text-xs text-gray-400 leading-relaxed">
+            Pay directly via Google Pay, PhonePe, Paytm UPI, NetBanking, or student debit cards without needing an expensive credit card.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         9. CAMPUS REVIEWS & RATINGS
+         ========================================================================= -->
+    <section class="py-16 bg-[#090D15] border-y border-gray-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-10">
+          <div class="flex items-center justify-center gap-1 text-amber-400 mb-2">
+            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+            <i data-lucide="star" class="w-5 h-5 fill-amber-400"></i>
+          </div>
+          <h2 class="text-3xl font-black text-white font-heading">Loved by 100,000+ College Explorers</h2>
+          <p class="text-xs text-gray-400 mt-1">See what students from top universities are saying about their CRUIZR road trips.</p>
+        </div>
+
+        <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Rendered dynamically via app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         10. FAQS ACCORDION
+         ========================================================================= -->
+    <section id="faqs-section" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-10">
+        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-500/30">GOT QUESTIONS?</span>
+        <h2 class="text-3xl font-black text-white mt-2 font-heading">Frequently Asked Questions</h2>
+      </div>
+
+      <div id="faqs-accordion" class="space-y-3">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         11. APP DOWNLOAD / BETA ACCESS (TRANSPARENT COMING SOON)
+         ========================================================================= -->
+    <section id="app-section" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card rounded-3xl p-8 sm:p-12 border border-[#FFE600]/30 bg-gradient-to-r from-[#0D111A] via-[#121826] to-[#0D111A] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        
+        <div class="max-w-xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/15 text-[#FFE600] text-xs font-bold border border-[#FFE600]/30">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> MOBILE APP COMING SOON
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
+            CRUIZR Mobile App — Launching Soon on iOS & Android
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            We're building native keyless unlock, Bluetooth aux sync, and live student emergency SOS into the CRUIZR app. Join our exclusive student beta waitlist for early access & flat 30% launch coupons.
+          </p>
+
+          <!-- Interactive Waitlist Form -->
+          <form id="beta-waitlist-form" class="flex flex-col sm:flex-row gap-2 pt-2">
+            <label for="waitlist-email" class="sr-only">College Email or Phone</label>
+            <input type="text" id="waitlist-email" placeholder="Enter your college email or mobile" required class="px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-xs text-white focus:outline-none focus:border-[#FFE600] flex-1" />
+            <button type="submit" class="px-6 py-3 rounded-xl bg-[#FFE600] text-black font-extrabold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/20 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="bell" class="w-3.5 h-3.5"></i> Get Notified
+            </button>
+          </form>
+          <p id="waitlist-success-msg" class="hidden text-xs text-amber-400 font-bold flex items-center gap-1">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> You're on the VIP waitlist! We'll notify you as soon as the app drops.
+          </p>
+        </div>
+
+        <!-- QR Code Container -->
+        <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 text-center space-y-2 flex-shrink-0">
+          <div class="w-32 h-32 bg-white p-2 rounded-xl mx-auto flex items-center justify-center">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://cruizr-app.local" alt="Scan to Preview CRUIZR Web App on Mobile" class="w-full h-full" />
+          </div>
+          <p class="text-[11px] font-bold text-gray-300">Scan to Open Web App</p>
+          <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-500/30">iOS & Android Beta Soon</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       12. FOOTER (NO DEAD # LINKS)
+       ========================================================================= -->
+  <footer class="bg-[#05070B] border-t border-gray-800/80 pt-16 pb-12 text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        
+        <!-- Brand summary -->
+        <div class="col-span-2 space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-base">
+              <i data-lucide="zap" class="w-5 h-5 fill-black text-black"></i>
+            </div>
+            <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
+          </div>
+          <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
+            The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
+          </p>
+          <div class="flex items-center gap-3 text-gray-400">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition" aria-label="CRUIZR Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition" aria-label="CRUIZR Twitter / X"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-white transition" aria-label="CRUIZR YouTube"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+
+        <!-- Campus Hubs -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Top Campus Hubs</p>
+          <ul class="space-y-2">
+            <li><button type="button" class="hub-quick-link hover:text-white transition text-left" data-city="Bangalore" data-hub="Christ University & Koramangala Hub">Bangalore (Christ/PES)</button></li>
+            <li><button type="button" class="hub-quick-link hover:text-white transition text-left" data-city="Delhi NCR" data-hub="Delhi University North Campus">Delhi (DU / Hauz Khas)</button></li>
+            <li><button type="button" class="hub-quick-link hover:text-white transition text-left" data-city="Pune" data-hub="Symbiosis Viman Nagar Hub">Pune (Symbiosis / MIT)</button></li>
+            <li><button type="button" class="hub-quick-link hover:text-white transition text-left" data-city="Mumbai" data-hub="IIT Bombay & Powai Hub">Mumbai (IIT / Mithibai)</button></li>
+            <li><button type="button" class="hub-quick-link hover:text-white transition text-left" data-city="Goa" data-hub="BITS Goa & Panjim Coastal Hub">Manipal & Goa Hubs</button></li>
+          </ul>
+        </div>
+
+        <!-- Student Programs -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Student Programs</p>
+          <ul class="space-y-2">
+            <li><button type="button" class="open-login-btn hover:text-[#FFE600] transition text-left">Student Pass (25% OFF)</button></li>
+            <li><button type="button" class="open-ambassador-btn hover:text-white transition text-left">Campus Ambassador</button></li>
+            <li><button type="button" class="open-host-modal-btn hover:text-white transition text-left">List Your Ride (Host)</button></li>
+            <li><button type="button" class="open-sponsorship-btn hover:text-white transition text-left">College Fest Sponsorship</button></li>
+            <li><a href="#hero-section" class="hover:text-white transition">Night Owl Pack</a></li>
+          </ul>
+        </div>
+
+        <!-- Safety & Policies -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Safety & Trust</p>
+          <ul class="space-y-2">
+            <li><button type="button" class="open-policy-btn hover:text-white transition text-left">Zero Deposit Policy</button></li>
+            <li><button type="button" class="open-roadside-btn hover:text-white transition text-left">24/7 Roadside Assistance</button></li>
+            <li><button type="button" class="open-terms-btn hover:text-white transition text-left">Terms & Privacy</button></li>
+            <li><button type="button" class="open-damage-btn hover:text-white transition text-left">Damage Protection Cover</button></li>
+            <li><button type="button" class="open-support-btn hover:text-white transition text-left">Help & Support</button></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-8 border-t border-gray-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
+        <p>© 2026 CRUIZR Technologies Inc. All rights reserved. Self-drive car rental platform for youth.</p>
+        <p class="flex items-center gap-1">Made with ⚡ for college roadtrippers.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       MODALS & DIALOGS
+       ========================================================================= -->
+
+  <!-- Campus Selector Modal -->
+  <div id="campus-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="campus-modal-title">
+    <div class="glass-dropdown w-full max-w-lg rounded-3xl p-6 border border-gray-700 space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+        <div>
+          <h3 id="campus-modal-title" class="text-base font-bold text-white">Select Your Campus / City Hub</h3>
+          <p class="text-xs text-gray-400">Find cars stationed nearest to your university</p>
+        </div>
+        <button id="close-campus-modal" type="button" aria-label="Close campus selector" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div id="campus-list" class="flex-1 overflow-y-auto space-y-2 pr-1 max-h-96">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Car Booking & Checkout Modal -->
+  <div id="booking-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+    <div class="glass-dropdown w-full max-w-3xl rounded-3xl p-6 border border-gray-700 max-h-[95vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-800 mb-5">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-[#FFE600]"></span>
+          <h3 id="booking-modal-title" class="text-lg font-black text-white">Student Reservation & Checkout</h3>
+        </div>
+        <button id="close-booking-modal" type="button" aria-label="Close booking modal" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div id="booking-modal-body">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Ticket Modal -->
+  <div id="confirmation-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-label="Booking Confirmation Ticket">
+    <div id="confirmation-modal-content" class="glass-dropdown w-full max-w-md rounded-3xl border border-[#FFE600]/50 overflow-hidden">
+      <!-- Rendered dynamically by app.js -->
+    </div>
+  </div>
+
+  <!-- Real / Mock Auth Modal with Phone OTP & Google Tabs -->
+  <div id="login-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="glass-dropdown w-full max-w-md rounded-3xl p-6 border border-gray-700 space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-[#FFE600] flex items-center justify-center text-black font-black text-sm">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+          </div>
+          <h3 id="auth-modal-title" class="text-base font-bold text-white">Student Authentication</h3>
+        </div>
+        <button id="close-login-modal" type="button" aria-label="Close login dialog" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Auth Form Container (Step 1: Input, Step 2: OTP) -->
+      <div id="auth-form-step-1" class="space-y-3">
+        <!-- Google 1-Click Button -->
+        <button id="auth-google-btn" type="button" class="w-full py-3 rounded-xl bg-white text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-gray-200 transition focus:outline-none focus:ring-2 focus:ring-[#FFE600]">
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          Continue with Google / College Email
+        </button>
+
+        <div class="flex items-center gap-2 text-xs text-gray-500 py-1">
+          <span class="flex-1 border-t border-gray-800"></span>
+          <span>or sign in with mobile OTP</span>
+          <span class="flex-1 border-t border-gray-800"></span>
+        </div>
+
+        <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 focus-within:border-[#FFE600]">
+          <label for="auth-phone-input" class="block text-[10px] text-gray-400 font-bold mb-1">MOBILE NUMBER</label>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-gray-400">+91</span>
+            <input type="tel" id="auth-phone-input" placeholder="Enter 10-digit mobile" maxlength="10" class="w-full bg-transparent text-sm text-white focus:outline-none font-mono" />
+          </div>
+        </div>
+
+        <button id="send-otp-btn" type="button" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-black text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/25 flex items-center justify-center gap-1.5">
+          Send OTP Verification Code →
+        </button>
+      </div>
+
+      <!-- Step 2: OTP Verification Screen -->
+      <div id="auth-form-step-2" class="hidden space-y-4">
+        <div class="text-center">
+          <p class="text-xs text-gray-300">Enter the 6-digit OTP code sent to <strong id="otp-phone-display" class="text-white">+91 98765 43210</strong></p>
+          <p class="text-[11px] text-[#FFE600] mt-1 font-mono">Test Demo Code: <strong>123456</strong></p>
+        </div>
+
+        <div class="flex justify-center gap-2">
+          <input type="text" id="otp-digit-1" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+          <input type="text" id="otp-digit-2" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+          <input type="text" id="otp-digit-3" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+          <input type="text" id="otp-digit-4" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+          <input type="text" id="otp-digit-5" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+          <input type="text" id="otp-digit-6" maxlength="1" class="otp-input w-11 h-12 text-center text-lg font-bold bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-[#FFE600] focus:outline-none" />
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-gray-400">
+          <button id="autofill-otp-btn" type="button" class="text-xs text-[#FFE600] font-bold hover:underline">Auto-Fill 123456</button>
+          <span id="otp-timer-label">Resend in 30s</span>
+        </div>
+
+        <button id="verify-otp-btn" type="button" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-black text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/25">
+          Verify & Sign In
+        </button>
+
+        <button id="back-to-phone-btn" type="button" class="w-full text-center text-xs text-gray-400 hover:text-white">
+          ← Change phone number
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Host Lead Modal -->
+  <div id="host-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="host-modal-title">
+    <div class="glass-dropdown w-full max-w-md rounded-3xl p-6 border border-gray-700 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+        <h3 id="host-modal-title" class="text-base font-bold text-white">List Your Car on CRUIZR</h3>
+        <button id="close-host-modal" type="button" aria-label="Close host modal" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-gray-400">Our campus fleet executive will reach out to install the keyless smart device & get you earning.</p>
+      
+      <form id="host-lead-form" class="space-y-3">
+        <label for="host-name" class="sr-only">Your Name</label>
+        <input type="text" id="host-name" placeholder="Your Full Name" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        
+        <label for="host-car" class="sr-only">Car Model</label>
+        <input type="text" id="host-car" placeholder="Car Model (e.g. Swift, Thar, Creta)" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        
+        <label for="host-location" class="sr-only">College Location</label>
+        <input type="text" id="host-location" placeholder="College / City Location" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        
+        <label for="host-phone" class="sr-only">Phone Number</label>
+        <input type="tel" id="host-phone" placeholder="Phone Number" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase hover:brightness-110 transition">
+          Submit Car Listing
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- General Informational Dialog (Policies, Ambassador, Sponsorship, Terms) -->
+  <div id="info-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+    <div class="glass-dropdown w-full max-w-lg rounded-3xl p-6 border border-gray-700 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+        <h3 id="info-modal-title" class="text-base font-bold text-white">Information</h3>
+        <button id="close-info-modal" type="button" aria-label="Close dialog" class="p-1 text-gray-400 hover:text-white focus:outline-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="info-modal-body" class="text-xs text-gray-300 leading-relaxed space-y-3">
+        <!-- Injected dynamically based on clicked footer item -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Data & App Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
