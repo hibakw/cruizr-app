@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help & Student Support Center | CRUIZR Self-Drive</title>
+  <meta name="description" content="CRUIZR Student Help Center: FAQs on keyless car unlock, split payments, zero deposit verification, roadside SOS assistance, and booking support." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#FFE600',
+              amber: '#FFB703',
+              cyan: '#60EFFF',
+              purple: '#9D4EDD',
+              dark: '#07090E',
+              darker: '#0B0F19',
+              card: '#121826'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Custom Theme CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
+
+  <!-- =========================================================================
+       NAVIGATION BAR
+       ========================================================================= -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center gap-2 group" aria-label="CRUIZR Home">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-xl shadow-lg shadow-[#FFE600]/30 group-hover:scale-105 transition">
+            <i data-lucide="zap" class="w-6 h-6 fill-black text-black"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black tracking-wider text-white font-heading">CRUIZR</span>
+              <span class="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-[#FFE600]/20 text-[#FFE600] border border-[#FFE600]/40 tracking-wider">YOUTH</span>
+            </div>
+            <p class="text-[10px] text-gray-400 font-medium tracking-tight -mt-1">Rent • Ride • Roadtrip</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-gray-300" aria-label="Help Navigation">
+        <a href="index.html#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
+        </a>
+        <a href="index.html#split-calculator" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="calculator" class="w-4 h-4 text-[#FFE600]"></i> Split Bill
+        </a>
+        <a href="terms.html" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+          <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i> Terms & Safety
+        </a>
+      </nav>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-3">
+        <a href="#contact-support" class="px-4 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition flex items-center gap-1.5 shadow-lg shadow-[#FFE600]/20">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>Contact Support</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       HERO / SEARCH SECTION
+       ========================================================================= -->
+  <section class="relative pt-16 pb-14 border-b border-gray-800/80 bg-radial-hero">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFE600]/10 border border-[#FFE600]/30 text-[#FFE600] text-xs font-bold">
+        <i data-lucide="life-buoy" class="w-4 h-4"></i>
+        <span>24/7 Student Road Trip Support Hub</span>
+      </div>
+      
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white font-heading">
+        How Can We Help <span class="text-gradient-yellow">Your Road Trip?</span>
+      </h1>
+      
+      <p class="text-sm text-gray-400 max-w-xl mx-auto leading-relaxed">
+        Got questions about keyless unlock, student ID verification, split bills, or roadside assistance? Find quick answers below or ping our 24/7 campus crew.
+      </p>
+
+      <!-- Interactive FAQ Search Input -->
+      <div class="max-w-xl mx-auto pt-3">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="w-5 h-5 text-gray-400 absolute left-4 pointer-events-none"></i>
+          <input 
+            type="text" 
+            id="faq-search-input" 
+            placeholder="Search questions (e.g. keyless unlock, refund, security deposit)..." 
+            class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[#0D111A] border border-gray-700 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FFE600] transition shadow-xl"
+          />
+        </div>
+      </div>
+
+      <!-- Quick Category Jump Pills -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 pt-2 text-xs">
+        <a href="#booking-help" class="px-3.5 py-1.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-[#FFE600] text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-[#FFE600]"></i> Booking & Unlock
+        </a>
+        <a href="#payments-help" class="px-3.5 py-1.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-[#FFE600] text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="credit-card" class="w-3.5 h-3.5 text-[#FFE600]"></i> Payments & Split
+        </a>
+        <a href="#cancellations-help" class="px-3.5 py-1.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-[#FFE600] text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-amber-400"></i> Cancellations & Refunds
+        </a>
+        <a href="#vehicle-support" class="px-3.5 py-1.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-[#FFE600] text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-400"></i> Roadside SOS
+        </a>
+        <a href="#account-help" class="px-3.5 py-1.5 rounded-xl bg-gray-900/90 border border-gray-800 hover:border-[#FFE600] text-gray-300 hover:text-white transition flex items-center gap-1.5">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-400"></i> Student Verification
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       MAIN CONTENT: FAQS & CATEGORIZED TOPICS
+       ========================================================================= -->
+  <main class="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+
+    <!-- Quick Emergency Callout -->
+    <div id="roadside-sos" class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-transparent border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <i data-lucide="phone-call" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="text-base font-black text-white font-heading">On an Active Trip & Need Immediate Highway Assistance?</h2>
+          <p class="text-xs text-gray-300 mt-0.5 leading-relaxed">
+            Our 24/7 SOS highway emergency dispatchers are on standby across all major university corridors.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <a href="tel:1800278497" class="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider transition text-center shadow-lg shadow-rose-500/30 flex items-center justify-center gap-1.5">
+          <i data-lucide="phone" class="w-4 h-4"></i>
+          <span>1800-CRUIZR (SOS)</span>
+        </a>
+        <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider transition text-center shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-1.5">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>WhatsApp SOS</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Category 1: Booking & Unlock Help -->
+    <section id="booking-help" class="space-y-4 faq-category">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-gray-800">
+        <div class="w-7 h-7 rounded-lg bg-[#FFE600]/15 text-[#FFE600] flex items-center justify-center">
+          <i data-lucide="key" class="w-4 h-4"></i>
+        </div>
+        <h2 class="text-lg font-bold text-white font-heading">Booking & Keyless App Unlock</h2>
+      </div>
+
+      <div class="space-y-3">
+        <!-- FAQ item -->
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>How does the keyless smart unlock work at campus hubs?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-2">
+            <p>Every CRUIZR vehicle is fitted with an encrypted telematics IoT smart lock. When your booking start time arrives, navigate to the active booking screen on your phone and tap <strong>"Unlock Car"</strong>. The car doors will automatically unlock via Bluetooth/cellular data with no physical key exchange required!</p>
+            <p class="text-gray-400">The physical ignition key/start-fob is secured inside the vehicle's glovebox for your trip duration.</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>What documents are mandatory before car pickup?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-1.5">
+            <p>You need only two items:</p>
+            <ul class="list-disc list-inside text-gray-300 pl-1 space-y-1">
+              <li>An original, valid government Driving License (LMV - Light Motor Vehicle).</li>
+              <li>A valid College Student ID card (or verified university institutional email address).</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>Can multiple friends take turns driving during our road trip?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Yes! You can add up to <strong>2 co-drivers for free</strong> during checkout. Each co-driver must simply upload their valid Driving License prior to departure so that insurance and legal coverage extends to everyone behind the wheel.</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>Can I extend my trip if we want to stay longer at our destination?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Yes, you can extend your booking right from the app with 1 tap, provided the vehicle does not have an immediate subsequent student reservation. If another booking exists, our support team will help you find a nearby swap option.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Category 2: Payments & Pricing Help -->
+    <section id="payments-help" class="space-y-4 faq-category">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-gray-800">
+        <div class="w-7 h-7 rounded-lg bg-[#FFE600]/15 text-[#FFE600] flex items-center justify-center">
+          <i data-lucide="calculator" class="w-4 h-4"></i>
+        </div>
+        <h2 class="text-lg font-bold text-white font-heading">Payments, Pricing & Split-Fare</h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>How does the CRUIZR Split-Fare Calculator work?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Our split calculator estimates your total trip cost by combining vehicle daily rental, estimated fuel costs, and FASTag highway tolls. It then computes the exact share per person: <code class="text-[#FFE600] font-mono">Math.ceil(Total Cost ÷ Number of Friends)</code>. You can generate a shareable UPI payment link or split QR code to share in your trip WhatsApp group!</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>Is there really zero security deposit for college students?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p><strong>Yes, 100% Zero Deposit!</strong> Traditional rental services block ₹5,000–₹10,000 on your cards. We know student budgets shouldn't be locked up. By submitting your valid student ID, your security deposit is completely waived.</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>What payment methods are supported?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>We support all UPI apps (Google Pay, PhonePe, Paytm, CRED), Net Banking across 50+ Indian banks, and all major Debit/Credit cards. No credit card is required to book.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Category 3: Cancellations & Refunds -->
+    <section id="cancellations-help" class="space-y-4 faq-category">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-gray-800">
+        <div class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        </div>
+        <h2 class="text-lg font-bold text-white font-heading">Cancellations, Weather Delays & Refunds</h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>What is the cancellation timeline and refund policy?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-1.5">
+            <p>Plans change, especially during college semester schedules! Here is our cancellation structure:</p>
+            <p>• <strong>More than 6 hours prior to trip start:</strong> 100% full instant refund.</p>
+            <p>• <strong>2 to 6 hours prior:</strong> 50% cash refund or 100% wallet credit for your next trip.</p>
+            <p>• <strong>Under 2 hours / No show:</strong> Incurred preparation fees apply.</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>How fast do refunds get credited?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>UPI payments are refunded in <strong>under 2 to 4 hours</strong>. Debit and credit cards typically reflect within 2 to 4 business banking days depending on your issuing bank.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Category 4: Vehicle & Roadside Assistance -->
+    <section id="vehicle-support" class="space-y-4 faq-category">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-gray-800">
+        <div class="w-7 h-7 rounded-lg bg-rose-500/15 text-rose-400 flex items-center justify-center">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+        </div>
+        <h2 class="text-lg font-bold text-white font-heading">Vehicle Safety, Breakdowns & Damage Protection</h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>What happens if the car has a mechanical breakdown or flat tyre?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-1.5">
+            <p>Every booking includes <strong>24/7 nationwide roadside assistance</strong>. If you experience a flat tyre, battery drain, or mechanical difficulty:</p>
+            <ol class="list-decimal list-inside space-y-1 text-gray-300 pl-1">
+              <li>Pull over to a safe highway shoulder and turn on your hazard lights.</li>
+              <li>Tap the <strong>"SOS Roadside Help"</strong> button in your CRUIZR active trip view or call <code class="text-[#FFE600]">1800-CRUIZR</code>.</li>
+              <li>A highway patrol technician is dispatched to your exact GPS coordinates with an estimated arrival of 30–45 minutes.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>What is the difference between Standard Cover and Zero Liability?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-2">
+            <p>• <strong>Standard Cover (Included Free):</strong> Caps your financial responsibility at a maximum of ₹5,000 for major external accidental damage.</p>
+            <p>• <strong>Zero Liability Protection (+₹199/day):</strong> Gives you complete peace of mind with ₹0 deductible liability for minor scrapes, small bumper scratches, and windshield rock chips.</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>Can we take the car across state borders (e.g. Bangalore to Goa or Delhi to Himachal)?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Yes! All CRUIZR fleet cars operate on commercial yellow-on-black tourist vehicle plates with valid <strong>All-India Tourist Permits (AITP)</strong>. You can legally cross state lines. Standard state border road tax receipts can be uploaded at trip end for automatic settlement.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Category 5: Student Account & Verification -->
+    <section id="account-help" class="space-y-4 faq-category">
+      <div class="flex items-center gap-2.5 pb-2 border-b border-gray-800">
+        <div class="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+        </div>
+        <h2 class="text-lg font-bold text-white font-heading">Account & Student Pass Verification</h2>
+      </div>
+
+      <div class="space-y-3">
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>How do I unlock the 25% student discount (STUDENT25)?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Sign in using your mobile number and enter the demo code <code class="text-[#FFE600] font-bold">123456</code> (or sign in with your college Google email). Once authenticated, the verified student badge activates in your top navigation bar, and coupon code <strong>STUDENT25</strong> is automatically applied at checkout!</p>
+          </div>
+        </details>
+
+        <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
+          <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
+            <span>Can I change my registered phone number?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
+          </summary>
+          <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
+            <p>Yes, tap your student profile icon in the navigation bar, select "Sign Out", and enter your new mobile number to receive a fresh OTP verification.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         CONTACT SUPPORT & SUBMIT TICKET FORM
+         ========================================================================= -->
+    <section id="contact-support" class="p-6 sm:p-10 rounded-3xl glass-card border border-gray-800 space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/10 border border-[#FFE600]/30 text-[#FFE600] text-xs font-bold">
+          <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+          <span>Direct Contact Channels</span>
+        </div>
+        <h2 class="text-2xl font-black text-white font-heading">Still Have Questions? Talk to Our Campus Crew</h2>
+        <p class="text-xs text-gray-400">
+          Our customer happiness and fleet dispatch teams are active 24/7 across major university hubs.
+        </p>
+      </div>
+
+      <!-- 4 Quick Contact Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+        <div class="p-4 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-2 text-center">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <p class="font-bold text-white">WhatsApp Support</p>
+          <p class="text-gray-400">+91 98765 CRZ-HELP</p>
+          <span class="inline-block text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Instant (< 3 min)</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-2 text-center">
+          <div class="w-9 h-9 rounded-xl bg-[#FFE600]/20 text-[#FFE600] flex items-center justify-center mx-auto">
+            <i data-lucide="phone" class="w-5 h-5"></i>
+          </div>
+          <p class="font-bold text-white">Toll-Free Helpline</p>
+          <p class="text-gray-400">1800-CRUIZR (24x7)</p>
+          <span class="inline-block text-[10px] text-[#FFE600] font-bold bg-[#FFE600]/10 px-2 py-0.5 rounded">Toll-Free Nationwide</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-2 text-center">
+          <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mx-auto">
+            <i data-lucide="mail" class="w-5 h-5"></i>
+          </div>
+          <p class="font-bold text-white">Email Support</p>
+          <p class="text-gray-400">help@cruizr.app</p>
+          <span class="inline-block text-[10px] text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded">Response within 2 hrs</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-gray-900/90 border border-gray-800 space-y-2 text-center">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+          </div>
+          <p class="font-bold text-white">Campus Help Desks</p>
+          <p class="text-gray-400">University Main Gates</p>
+          <span class="inline-block text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded">Active 7am - 11pm</span>
+        </div>
+      </div>
+
+      <!-- Interactive Support Ticket Form -->
+      <form id="support-ticket-form" class="space-y-4 max-w-2xl mx-auto pt-4">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider text-center">Send Us a Direct Message</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="ticket-name" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Your Name</label>
+            <input type="text" id="ticket-name" required placeholder="e.g. Aryan Sharma" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]" />
+          </div>
+          <div>
+            <label for="ticket-phone" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Mobile Number</label>
+            <input type="tel" id="ticket-phone" required placeholder="10-digit mobile" maxlength="10" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="ticket-topic" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Issue Topic</label>
+            <select id="ticket-topic" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]">
+              <option value="booking">Keyless App Unlock & Booking</option>
+              <option value="deposit">Zero Deposit / Student ID</option>
+              <option value="refund">Cancellation & Refund Request</option>
+              <option value="roadside">Roadside Assistance / Damage</option>
+              <option value="other">General Question</option>
+            </select>
+          </div>
+          <div>
+            <label for="ticket-hub" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Campus Hub</label>
+            <input type="text" id="ticket-hub" placeholder="e.g. Christ Univ / Koramangala" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]" />
+          </div>
+        </div>
+
+        <div>
+          <label for="ticket-message" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Details / Trip ID</label>
+          <textarea id="ticket-message" required rows="3" placeholder="Tell us how we can help with your upcoming or active road trip..." class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-black text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/25 flex items-center justify-center gap-1.5">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Submit Support Request</span>
+        </button>
+
+        <div id="ticket-success-message" class="hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs text-center">
+          ✅ Thanks! Your ticket has been logged. Our campus support desk will WhatsApp/call you shortly.
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer class="bg-[#05070B] border-t border-gray-800/80 pt-16 pb-12 text-xs text-gray-400 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        
+        <!-- Brand summary -->
+        <div class="col-span-2 space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-base">
+              <i data-lucide="zap" class="w-5 h-5 fill-black text-black"></i>
+            </div>
+            <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
+          </div>
+          <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
+            The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
+          </p>
+          <div class="flex items-center gap-3 text-gray-400">
+            <!-- Instagram (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR Instagram (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
+
+            <!-- X / Twitter (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR X / Twitter (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
+
+            <!-- YouTube (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-white transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR YouTube (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campus Hubs Links -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Campus Hubs</p>
+          <ul class="space-y-2">
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Bangalore (Christ/PES)</a></li>
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Delhi (DU / Hauz Khas)</a></li>
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Pune (Symbiosis / MIT)</a></li>
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Mumbai (IIT / Mithibai)</a></li>
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Goa Coastal Hubs</a></li>
+          </ul>
+        </div>
+
+        <!-- Student Programs -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Student Programs</p>
+          <ul class="space-y-2">
+            <li><a href="index.html#fleet-section" class="hover:text-[#FFE600] transition">Student Pass (25% OFF)</a></li>
+            <li><a href="index.html#host-section" class="hover:text-white transition">List Your Ride (Host)</a></li>
+            <li><a href="index.html#split-calculator" class="hover:text-white transition">Split Bill Calculator</a></li>
+            <li><a href="index.html#roadtrips-section" class="hover:text-white transition">Road Trip Guides</a></li>
+          </ul>
+        </div>
+
+        <!-- Safety & Policies -->
+        <div>
+          <p class="font-bold text-white uppercase tracking-wider mb-3">Safety & Trust</p>
+          <ul class="space-y-2">
+            <li><a href="index.html#fleet-section" class="hover:text-white transition">Zero Deposit Policy</a></li>
+            <li><a href="#roadside-sos" class="hover:text-white transition">24/7 Roadside Assistance</a></li>
+            <li><a href="terms.html" class="hover:text-white transition">Terms & Privacy</a></li>
+            <li><a href="help.html" class="text-[#FFE600] font-bold transition">Help & Support</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-8 border-t border-gray-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
+        <p>© 2026 CRUIZR Technologies Inc. All rights reserved. Self-drive car rental platform for youth.</p>
+        <p class="flex items-center gap-1">Made with ⚡ for college roadtrippers.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Search & Form Handling Scripts -->
+  <script>
+    lucide.createIcons();
+
+    // Client-side quick FAQ search filter
+    const searchInput = document.getElementById('faq-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.faq-item');
+        
+        items.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          if (!query || text.includes(query)) {
+            item.style.display = '';
+            if (query) item.open = true; // Auto-expand matching questions
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    // Support ticket submit simulation
+    const ticketForm = document.getElementById('support-ticket-form');
+    const successMsg = document.getElementById('ticket-success-message');
+    if (ticketForm) {
+      ticketForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (successMsg) {
+          successMsg.classList.remove('hidden');
+          ticketForm.reset();
+          setTimeout(() => {
+            successMsg.classList.add('hidden');
+          }, 6000);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

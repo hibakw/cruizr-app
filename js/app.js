@@ -1468,8 +1468,83 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const closeHostBtn = document.getElementById("close-host-modal");
     const hostModal = document.getElementById("host-modal");
+    const hostLeadForm = document.getElementById("host-lead-form");
+    const hostNameInput = document.getElementById("host-name");
+    const hostCarInput = document.getElementById("host-car");
+    const hostLocationInput = document.getElementById("host-location");
+    const hostPhoneInput = document.getElementById("host-phone");
+
+    const hostNameErr = document.getElementById("host-name-error");
+    const hostCarErr = document.getElementById("host-car-error");
+    const hostLocationErr = document.getElementById("host-location-error");
+    const hostPhoneErr = document.getElementById("host-phone-error");
+
+    function setFieldError(input, errorEl, message) {
+      if (input) {
+        input.classList.remove("border-gray-800");
+        input.classList.add("border-rose-500");
+      }
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.remove("hidden");
+      }
+    }
+
+    function clearFieldError(input, errorEl) {
+      if (input) {
+        input.classList.remove("border-rose-500");
+        input.classList.add("border-gray-800");
+      }
+      if (errorEl) {
+        errorEl.textContent = "";
+        errorEl.classList.add("hidden");
+      }
+    }
+
+    function resetHostLeadForm() {
+      if (hostLeadForm) {
+        hostLeadForm.reset();
+      }
+      [
+        { input: hostNameInput, err: hostNameErr },
+        { input: hostCarInput, err: hostCarErr },
+        { input: hostLocationInput, err: hostLocationErr },
+        { input: hostPhoneInput, err: hostPhoneErr }
+      ].forEach(({ input, err }) => {
+        if (input) {
+          input.value = "";
+          input.classList.remove("border-rose-500");
+          input.classList.add("border-gray-800");
+        }
+        if (err) {
+          err.textContent = "";
+          err.classList.add("hidden");
+        }
+      });
+      try {
+        localStorage.removeItem("CRUIZR_HOST_LEAD");
+        localStorage.removeItem("cruizr_host_lead");
+        sessionStorage.removeItem("CRUIZR_HOST_LEAD");
+        sessionStorage.removeItem("cruizr_host_lead");
+      } catch (e) {}
+    }
+
+    [
+      { input: hostNameInput, err: hostNameErr },
+      { input: hostCarInput, err: hostCarErr },
+      { input: hostLocationInput, err: hostLocationErr },
+      { input: hostPhoneInput, err: hostPhoneErr }
+    ].forEach(({ input, err }) => {
+      if (input) {
+        input.addEventListener("input", () => clearFieldError(input, err));
+      }
+    });
+
     if (closeHostBtn && hostModal) {
-      closeHostBtn.addEventListener("click", () => hostModal.classList.add("hidden"));
+      closeHostBtn.addEventListener("click", () => {
+        hostModal.classList.add("hidden");
+        resetHostLeadForm();
+      });
     }
 
     const closeInfoBtn = document.getElementById("close-info-modal");
@@ -1478,19 +1553,92 @@ document.addEventListener("DOMContentLoaded", () => {
       closeInfoBtn.addEventListener("click", () => infoModal.classList.add("hidden"));
     }
 
+    const openHostModal = () => {
+      resetHostLeadForm();
+      if (hostModal) {
+        hostModal.classList.remove("hidden");
+      }
+    };
+
     document.querySelectorAll(".open-host-modal-btn").forEach(btn => {
-      btn.addEventListener("click", () => hostModal?.classList.remove("hidden"));
+      btn.addEventListener("click", openHostModal);
     });
 
-    document.getElementById("host-lead-form")?.addEventListener("submit", (e) => {
+    const hostCtaBtn = document.getElementById("host-cta-btn");
+    if (hostCtaBtn) {
+      hostCtaBtn.addEventListener("click", openHostModal);
+    }
+
+    hostLeadForm?.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      let isValid = true;
+
+      // 1. Validate Name
+      const nameVal = hostNameInput ? hostNameInput.value.trim() : "";
+      if (!nameVal) {
+        setFieldError(hostNameInput, hostNameErr, "Please enter your full name.");
+        isValid = false;
+      } else {
+        clearFieldError(hostNameInput, hostNameErr);
+      }
+
+      // 2. Validate Car Model
+      const carVal = hostCarInput ? hostCarInput.value.trim() : "";
+      if (!carVal) {
+        setFieldError(hostCarInput, hostCarErr, "Please enter your car model.");
+        isValid = false;
+      } else {
+        clearFieldError(hostCarInput, hostCarErr);
+      }
+
+      // 3. Validate College Location
+      const locationVal = hostLocationInput ? hostLocationInput.value.trim() : "";
+      if (!locationVal) {
+        setFieldError(hostLocationInput, hostLocationErr, "Please enter your college or city location.");
+        isValid = false;
+      } else {
+        clearFieldError(hostLocationInput, hostLocationErr);
+      }
+
+      // 4. Validate Phone Number (Strict 10-digit Indian mobile starting with 6-9)
+      const phoneVal = hostPhoneInput ? hostPhoneInput.value.trim() : "";
+      if (!phoneVal) {
+        setFieldError(hostPhoneInput, hostPhoneErr, "Phone number is required.");
+        isValid = false;
+      } else if (/[^\d]/.test(phoneVal)) {
+        setFieldError(hostPhoneInput, hostPhoneErr, "Phone number must contain digits only (no letters or symbols).");
+        isValid = false;
+      } else if (phoneVal.length !== 10) {
+        setFieldError(hostPhoneInput, hostPhoneErr, "Phone number must be exactly 10 digits.");
+        isValid = false;
+      } else if (!/^[6-9]/.test(phoneVal)) {
+        setFieldError(hostPhoneInput, hostPhoneErr, "Invalid mobile number. Indian mobile numbers must start with 6, 7, 8, or 9.");
+        isValid = false;
+      } else {
+        clearFieldError(hostPhoneInput, hostPhoneErr);
+      }
+
+      if (!isValid) {
+        return;
+      }
+
+      // Hide modal & reset form completely
       hostModal?.classList.add("hidden");
-      showToast("🚗 Host listing submitted! Our campus manager will call you within 2 hours.", "success");
+      resetHostLeadForm();
+
+      // Show exact prototype confirmation message
+      showToast("Car listing submitted successfully! This is a prototype (no real listing has been created).", "success");
     });
 
     document.querySelectorAll(".modal-backdrop").forEach(modal => {
       modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.classList.add("hidden");
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+          if (modal.id === "host-modal") {
+            resetHostLeadForm();
+          }
+        }
       });
     });
   }

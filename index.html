@@ -670,9 +670,37 @@
             The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
           </p>
           <div class="flex items-center gap-3 text-gray-400">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition" aria-label="CRUIZR Instagram"><i data-lucide="instagram" class="w-4 h-4"></i></a>
-            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition" aria-label="CRUIZR Twitter / X"><i data-lucide="twitter" class="w-4 h-4"></i></a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-gray-900 hover:text-white transition" aria-label="CRUIZR YouTube"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+            <!-- Instagram (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR Instagram (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
+
+            <!-- X / Twitter (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-[#FFE600] transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR X / Twitter (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
+
+            <!-- YouTube (Coming Soon) -->
+            <div class="relative group">
+              <button type="button" class="p-2 rounded-lg bg-gray-900 hover:text-white transition flex items-center justify-center cursor-default text-gray-400" aria-label="CRUIZR YouTube (Coming Soon)" title="Coming Soon">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </button>
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-gray-800 border border-gray-700 text-white text-[10px] font-medium rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20">Coming Soon</span>
+            </div>
           </div>
         </div>
 
@@ -706,9 +734,9 @@
           <ul class="space-y-2">
             <li><button type="button" class="open-policy-btn hover:text-white transition text-left">Zero Deposit Policy</button></li>
             <li><button type="button" class="open-roadside-btn hover:text-white transition text-left">24/7 Roadside Assistance</button></li>
-            <li><button type="button" class="open-terms-btn hover:text-white transition text-left">Terms & Privacy</button></li>
+            <li><a href="terms.html" class="hover:text-white transition text-left">Terms & Privacy</a></li>
             <li><button type="button" class="open-damage-btn hover:text-white transition text-left">Damage Protection Cover</button></li>
-            <li><button type="button" class="open-support-btn hover:text-white transition text-left">Help & Support</button></li>
+            <li><a href="help.html" class="hover:text-white transition text-left">Help & Support</a></li>
           </ul>
         </div>
 
@@ -855,22 +883,34 @@
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <p class="text-xs text-gray-400">Our campus fleet executive will reach out to install the keyless smart device & get you earning.</p>
+      <p class="text-xs text-gray-400">Share your car details to calculate host earnings (student prototype demo).</p>
       
-      <form id="host-lead-form" class="space-y-3">
-        <label for="host-name" class="sr-only">Your Name</label>
-        <input type="text" id="host-name" placeholder="Your Full Name" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+      <form id="host-lead-form" class="space-y-3" novalidate autocomplete="off">
+        <div>
+          <label for="host-name" class="sr-only">Your Name</label>
+          <input type="text" id="host-name" placeholder="Your Full Name" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none transition" />
+          <p id="host-name-error" class="hidden text-[11px] text-rose-400 mt-1 font-medium"></p>
+        </div>
         
-        <label for="host-car" class="sr-only">Car Model</label>
-        <input type="text" id="host-car" placeholder="Car Model (e.g. Swift, Thar, Creta)" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        <div>
+          <label for="host-car" class="sr-only">Car Model</label>
+          <input type="text" id="host-car" placeholder="Car Model (e.g. Swift, Thar, Creta)" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none transition" />
+          <p id="host-car-error" class="hidden text-[11px] text-rose-400 mt-1 font-medium"></p>
+        </div>
         
-        <label for="host-location" class="sr-only">College Location</label>
-        <input type="text" id="host-location" placeholder="College / City Location" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        <div>
+          <label for="host-location" class="sr-only">College Location</label>
+          <input type="text" id="host-location" placeholder="College / City Location" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none transition" />
+          <p id="host-location-error" class="hidden text-[11px] text-rose-400 mt-1 font-medium"></p>
+        </div>
         
-        <label for="host-phone" class="sr-only">Phone Number</label>
-        <input type="tel" id="host-phone" placeholder="Phone Number" required class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none" />
+        <div>
+          <label for="host-phone" class="sr-only">Phone Number</label>
+          <input type="tel" id="host-phone" placeholder="10-digit Mobile Number (starts with 6-9)" required maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:border-[#FFE600] focus:outline-none transition font-mono" />
+          <p id="host-phone-error" class="hidden text-[11px] text-rose-400 mt-1 font-medium"></p>
+        </div>
         
-        <button type="submit" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase hover:brightness-110 transition">
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase hover:brightness-110 active:scale-95 transition">
           Submit Car Listing
         </button>
       </form>
