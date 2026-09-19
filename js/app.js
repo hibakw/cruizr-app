@@ -83,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initFAQs();
   initWaitlist();
   initFooterModals();
+  initFeatureDeepLinks();
   initModals();
 
   // Initial sync across all components
@@ -1319,8 +1320,8 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="flex items-center gap-3">
                 <input type="checkbox" id="modal-protection-check" ${state.protectionPlan === 'zero-liability' ? 'checked' : ''} class="w-4 h-4 rounded text-[#FFE600] bg-gray-800 border-gray-700 focus:ring-0" />
                 <div>
-                  <p class="text-xs font-bold text-white">Zero Liability Student Protection</p>
-                  <p class="text-[11px] text-gray-400">100% peace of mind against scratches/dents</p>
+                  <p class="text-xs font-bold text-white">Illustrative Student Protection</p>
+                  <p class="text-[11px] text-gray-400">Prototype protection concept for scratches/dents</p>
                 </div>
               </div>
               <span class="text-xs font-bold text-[#FFE600]">+₹199/day</span>
@@ -1360,7 +1361,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ` : ''}
               ${state.protectionPlan === 'zero-liability' ? `
                 <div class="flex justify-between">
-                  <span>Zero Liability Cover</span>
+                  <span>Illustrative Protection Cover</span>
                   <span class="font-bold text-white">₹${(199 * days).toLocaleString("en-IN")}</span>
                 </div>
               ` : ''}
@@ -1375,8 +1376,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span class="font-bold text-white">₹${gst.toLocaleString("en-IN")}</span>
               </div>
               <div class="flex justify-between text-amber-400">
-                <span>Security Deposit (Student Pass)</span>
-                <span class="font-bold">₹0 FREE</span>
+                <span>Security Deposit</span>
+                <span class="font-bold">${car.zeroDeposit ? '₹0 in demo' : 'Subject to applicable terms'}</span>
               </div>
             </div>
 
@@ -1596,8 +1597,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     function updateHostEarnings() {
-      const dailyRate = rateTable[state.hostCarType] || 2000;
-      const days = state.hostDays;
+      const dailyRate = rateTable[state.hostCarType] || rateTable.suv;
+      const parsedDays = Number(state.hostDays);
+      const days = Number.isFinite(parsedDays) ? Math.min(30, Math.max(5, Math.floor(parsedDays))) : 15;
+      state.hostDays = days;
       const total = Math.round(dailyRate * days * 0.75); // 75% host payout share
 
       if (daysLabel) daysLabel.textContent = `${days} Days / Month`;
@@ -1802,7 +1805,7 @@ document.addEventListener("DOMContentLoaded", () => {
         openInfo("🛡️ Zero Security Deposit Policy", `
           <p>At CRUIZR, we believe student road trips shouldn't be blocked by massive deposit holds.</p>
           <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2 my-2">
-            <p><strong>1. Eligibility:</strong> Any student with a valid government Driving License and a College Student ID or active .edu email qualifies for 100% Zero Deposit.</p>
+            <p><strong>1. Eligibility:</strong> The demo illustrates how a student with a valid government Driving License and a College Student ID or active .edu email might qualify for a zero-deposit concept, subject to applicable terms.</p>
             <p><strong>2. No Credit Card Needed:</strong> You don't need a credit card with locked credit limits. UPI / Debit cards work seamlessly.</p>
             <p><strong>3. Transparent Assessment:</strong> Pre-trip digital photos are recorded via app before unlock to ensure no unfair charges.</p>
           </div>
@@ -1828,7 +1831,7 @@ document.addEventListener("DOMContentLoaded", () => {
         openInfo("📄 Terms of Use & Cancellation Policy", `
           <p>Fair, transparent terms designed for student flexibility:</p>
           <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2 my-2">
-            <p>• <strong>Free Cancellation:</strong> 100% refund if cancelled at least 6 hours before trip start.</p>
+            <p>• <strong>Cancellation concept:</strong> The demo illustrates a possible full refund when cancelled at least 6 hours before trip start, subject to applicable terms.</p>
             <p>• <strong>Fuel Policy:</strong> Return car with same fuel level as pickup (or opt for Fuel Included plan).</p>
             <p>• <strong>Interstate Permits:</strong> All CRUIZR vehicles possess valid All-India Tourist Permits for seamless border crossings.</p>
           </div>
@@ -1842,9 +1845,17 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>Choose your comfort level during checkout:</p>
           <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2 my-2">
             <p>• <strong>Standard Cover (Included Free):</strong> Financial liability capped at ₹5,000 in case of major accidental damage.</p>
-            <p>• <strong>Zero Liability Protection (+₹199/day):</strong> 100% ₹0 liability for all minor scratches, bumper scuffs, and glass damage.</p>
+            <p>• <strong>Illustrative Protection Concept (+₹199/day):</strong> The demo shows a possible ₹0-liability option for minor scratches, bumper scuffs, and glass damage, subject to applicable terms. This is not a real-world guarantee.</p>
           </div>
         `);
+      });
+    });
+
+    document.querySelectorAll(".open-night-owl-btn").forEach(b => {
+      b.addEventListener("click", () => {
+        const nightTab = document.querySelector('.hero-tab-btn[data-tab="night"]');
+        if (nightTab) nightTab.click();
+        document.getElementById("hero-section")?.scrollIntoView({ behavior: "smooth" });
       });
     });
 
@@ -1860,6 +1871,20 @@ document.addEventListener("DOMContentLoaded", () => {
         `);
       });
     });
+  }
+
+  function initFeatureDeepLinks() {
+    const feature = new URLSearchParams(window.location.search).get("feature");
+    const featureSelectors = {
+      "student-pass": ".open-login-btn",
+      "host": ".open-host-modal-btn",
+      "zero-deposit": ".open-policy-btn",
+      "roadside": ".open-roadside-btn",
+      "damage": ".open-damage-btn",
+      "night-owl": ".open-night-owl-btn"
+    };
+    const selector = featureSelectors[feature];
+    if (selector) document.querySelector(selector)?.click();
   }
 
   /* ==========================================================================

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Help & Student Support Center | CRUIZR Self-Drive</title>
-  <meta name="description" content="CRUIZR Student Help Center: FAQs on keyless car unlock, split payments, zero deposit verification, roadside SOS assistance, and booking support." />
+  <meta name="description" content="CRUIZR Student Help Center prototype: FAQs on keyless car unlock, split payments, deposit concepts, roadside SOS assistance, and booking support." />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -39,6 +39,7 @@
 
   <!-- Custom Theme CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 </head>
 
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
@@ -47,11 +48,11 @@
        NAVIGATION BAR
        ========================================================================= -->
   <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center gap-4 lg:gap-6">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-6">
-        <a href="index.html" class="flex items-center gap-2 group" aria-label="CRUIZR Home">
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="index.html" class="flex items-center gap-2 group shrink-0" aria-label="CRUIZR Home">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-xl shadow-lg shadow-[#FFE600]/30 group-hover:scale-105 transition">
             <i data-lucide="zap" class="w-6 h-6 fill-black text-black"></i>
           </div>
@@ -66,7 +67,7 @@
       </div>
 
       <!-- Desktop Nav Links -->
-      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-gray-300" aria-label="Help Navigation">
+      <nav class="hidden md:flex flex-1 min-w-0 items-center justify-center gap-5 xl:gap-7 text-sm font-semibold text-gray-300 whitespace-nowrap" aria-label="Help Navigation">
         <a href="index.html#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
           <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
         </a>
@@ -79,10 +80,10 @@
       </nav>
 
       <!-- Action Button -->
-      <div class="flex items-center gap-3">
-        <a href="#contact-support" class="px-4 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition flex items-center gap-1.5 shadow-lg shadow-[#FFE600]/20">
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="#contact-support" aria-label="Contact Support" title="Contact Support" class="px-2 sm:px-3 lg:px-4 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition flex items-center gap-1.5 shadow-lg shadow-[#FFE600]/20 whitespace-nowrap">
           <i data-lucide="message-square" class="w-4 h-4"></i>
-          <span>Contact Support</span>
+          <span class="hidden sm:inline">Contact Support</span>
         </a>
       </div>
 
@@ -251,11 +252,11 @@
 
         <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
           <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
-            <span>Is there really zero security deposit for college students?</span>
+            <span>Does the prototype demonstrate a zero-security-deposit concept for college students?</span>
             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
           </summary>
           <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
-            <p><strong>Yes, 100% Zero Deposit!</strong> Traditional rental services block ₹5,000–₹10,000 on your cards. We know student budgets shouldn't be locked up. By submitting your valid student ID, your security deposit is completely waived.</p>
+            <p><strong>Prototype zero-deposit concept:</strong> Traditional rental services may block ₹5,000–₹10,000 on cards. This demo illustrates how a valid student ID could be used in a deposit-waiver flow, subject to applicable terms. It is not a real-world guarantee.</p>
           </div>
         </details>
 
@@ -288,8 +289,8 @@
           </summary>
           <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-1.5">
             <p>Plans change, especially during college semester schedules! Here is our cancellation structure:</p>
-            <p>• <strong>More than 6 hours prior to trip start:</strong> 100% full instant refund.</p>
-            <p>• <strong>2 to 6 hours prior:</strong> 50% cash refund or 100% wallet credit for your next trip.</p>
+            <p>• <strong>More than 6 hours prior to trip start:</strong> Illustrative full-refund flow, subject to applicable terms.</p>
+            <p>• <strong>2 to 6 hours prior:</strong> Illustrative partial refund or wallet-credit flow, subject to applicable terms.</p>
             <p>• <strong>Under 2 hours / No show:</strong> Incurred preparation fees apply.</p>
           </div>
         </details>
@@ -322,7 +323,7 @@
             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
           </summary>
           <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-1.5">
-            <p>Every booking includes <strong>24/7 nationwide roadside assistance</strong>. If you experience a flat tyre, battery drain, or mechanical difficulty:</p>
+            <p>The prototype describes <strong>24/7 roadside assistance</strong> as a planned support concept. If a real service were available and you experienced a flat tyre, battery drain, or mechanical difficulty:</p>
             <ol class="list-decimal list-inside space-y-1 text-gray-300 pl-1">
               <li>Pull over to a safe highway shoulder and turn on your hazard lights.</li>
               <li>Tap the <strong>"SOS Roadside Help"</strong> button in your CRUIZR active trip view or call <code class="text-[#FFE600]">1800-CRUIZR</code>.</li>
@@ -333,12 +334,12 @@
 
         <details class="faq-item group p-4 rounded-2xl glass-card border border-gray-800 hover:border-gray-700 transition cursor-pointer">
           <summary class="flex items-center justify-between font-semibold text-sm text-white list-none">
-            <span>What is the difference between Standard Cover and Zero Liability?</span>
+            <span>What is the difference between Standard Cover and the illustrative protection concept?</span>
             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-2"></i>
           </summary>
           <div class="mt-3 pt-3 border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed space-y-2">
-            <p>• <strong>Standard Cover (Included Free):</strong> Caps your financial responsibility at a maximum of ₹5,000 for major external accidental damage.</p>
-            <p>• <strong>Zero Liability Protection (+₹199/day):</strong> Gives you complete peace of mind with ₹0 deductible liability for minor scrapes, small bumper scratches, and windshield rock chips.</p>
+            <p>• <strong>Standard Cover (illustrative):</strong> Shows a possible ₹5,000 financial-responsibility cap for major external accidental damage, subject to applicable terms.</p>
+            <p>• <strong>Illustrative Protection Concept (+₹199/day):</strong> Demonstrates a possible ₹0-deductible option for minor scrapes, small bumper scratches, and windshield rock chips. This is not a real-world guarantee.</p>
           </div>
         </details>
 
@@ -460,7 +461,7 @@
             <label for="ticket-topic" class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Issue Topic</label>
             <select id="ticket-topic" class="w-full p-3 rounded-xl bg-gray-900 border border-gray-800 text-xs text-white focus:outline-none focus:border-[#FFE600]">
               <option value="booking">Keyless App Unlock & Booking</option>
-              <option value="deposit">Zero Deposit / Student ID</option>
+              <option value="deposit">Deposit Concept / Student ID</option>
               <option value="refund">Cancellation & Refund Request</option>
               <option value="roadside">Roadside Assistance / Damage</option>
               <option value="other">General Question</option>
@@ -507,7 +508,7 @@
             <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
           </div>
           <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
-            The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
+            CRUIZR is a student-built prototype for college mobility. Pricing, availability, deposits, protection, support, and other operational details are for demonstration purposes only.
           </p>
           <div class="flex items-center gap-3 text-gray-400">
             <!-- Instagram (Coming Soon) -->
@@ -560,8 +561,8 @@
         <div>
           <p class="font-bold text-white uppercase tracking-wider mb-3">Student Programs</p>
           <ul class="space-y-2">
-            <li><a href="index.html#fleet-section" class="hover:text-[#FFE600] transition">Student Pass (25% OFF)</a></li>
-            <li><a href="index.html#host-section" class="hover:text-white transition">List Your Ride (Host)</a></li>
+            <li><a href="index.html?feature=student-pass" class="hover:text-[#FFE600] transition">Student Pass (25% OFF)</a></li>
+            <li><a href="index.html?feature=host" class="hover:text-white transition">List Your Ride (Host)</a></li>
             <li><a href="index.html#split-calculator" class="hover:text-white transition">Split Bill Calculator</a></li>
             <li><a href="index.html#roadtrips-section" class="hover:text-white transition">Road Trip Guides</a></li>
           </ul>
@@ -571,7 +572,7 @@
         <div>
           <p class="font-bold text-white uppercase tracking-wider mb-3">Safety & Trust</p>
           <ul class="space-y-2">
-            <li><a href="index.html#fleet-section" class="hover:text-white transition">Zero Deposit Policy</a></li>
+            <li><a href="index.html?feature=zero-deposit" class="hover:text-white transition">Prototype Zero-Deposit Concept</a></li>
             <li><a href="#roadside-sos" class="hover:text-white transition">24/7 Roadside Assistance</a></li>
             <li><a href="terms.html" class="hover:text-white transition">Terms & Privacy</a></li>
             <li><a href="help.html" class="text-[#FFE600] font-bold transition">Help & Support</a></li>

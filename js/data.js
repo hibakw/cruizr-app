@@ -104,7 +104,7 @@ const APP_DATA = {
       rating: 4.95,
       tripsCount: 380,
       image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
-      features: ["Convertible / Rugged 4x4", "High Ground Clearance", "Touchscreen Audio", "Hill Assist"],
+      features: ["Hard-Top Rugged 4x4", "High Ground Clearance", "Touchscreen Audio", "Hill Assist"],
       location: "Koramangala 4th Block • 1.2 km away",
       zeroDeposit: true,
       badge: "Epic Roadtrip ⛰️",
@@ -230,7 +230,7 @@ const APP_DATA = {
       badge: "Zero Fuel Cost 🔋",
       quickBubble: "🔋 453km Electric Range • ₹0 Fuel • Instant Torque",
       specs: { mileage: "453 km / Full Charge", boot: "350 Litres", speed: "140 km/h", sound: "Harman 8-Speaker Studio" },
-      desc: "Save 100% on petrol! Cruise silently with electric torque and complimentary fast charging at 5,000+ public charging stations."
+      desc: "The demo illustrates no petrol cost while charging: cruise silently with electric torque and a fast-charging concept."
     },
     {
       id: "car-bmw-blr",
@@ -274,7 +274,7 @@ const APP_DATA = {
       rating: 4.82,
       tripsCount: 295,
       image: "https://images.unsplash.com/photo-1619682817481-e994891cd1f5?auto=format&fit=crop&w=800&q=80",
-      features: ["Smooth Automatic", "Wireless Phone Charger", "Bose 6-Speaker System", "Rear AC Vents"],
+      features: ["Smooth Automatic", "Wireless Phone Charger", "Bose 7-Speaker System", "Rear AC Vents"],
       location: "North Campus Metro Hub • 0.6 km away",
       zeroDeposit: true,
       badge: "Smooth Auto ⚡",
@@ -500,7 +500,7 @@ const APP_DATA = {
       badge: "Zero Fuel Cost 🔋",
       quickBubble: "🔋 453km Electric Range • ₹0 Fuel • Instant Torque",
       specs: { mileage: "453 km / Full Charge", boot: "350 Litres", speed: "140 km/h", sound: "Harman 8-Speaker Studio" },
-      desc: "Save 100% on petrol! Cruise silently with electric torque and complimentary fast charging at 5,000+ public charging stations."
+      desc: "The demo illustrates no petrol cost while charging: cruise silently with electric torque and a fast-charging concept."
     },
     {
       id: "car-bmw",
@@ -1043,7 +1043,7 @@ const APP_DATA = {
       car: "Mahindra Thar 4x4",
       trip: "Goa Semester Break",
       rating: 5,
-      comment: "Split the Thar with 4 hostel wingmates — it came down to just ₹750 each per day! Bluetooth connected instantly and zero deposit with my student ID. Unbeatable experience."
+      comment: "Split the Thar with 4 hostel wingmates — the demo came to about ₹750 each per day! Bluetooth connected instantly, and the prototype showed a zero-deposit concept with my student ID."
     },
     {
       name: "Sneha Nair",
@@ -1097,7 +1097,7 @@ const APP_DATA = {
     },
     {
       q: "Are toll gate passes (FASTag) and Aux/Bluetooth included?",
-      a: "Yes! 100% of our fleet comes with an active FASTag so you never wait in toll queues. Plus, every car is verified to have working Bluetooth / Apple CarPlay / Android Auto so your road trip playlist never stops."
+      a: "The prototype models an active FASTag and connected-car experience. Actual vehicle equipment, availability, and support would be subject to applicable terms and real-world verification."
     }
   ]
 };

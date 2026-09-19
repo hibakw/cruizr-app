@@ -39,6 +39,7 @@
 
   <!-- Custom Theme CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 </head>
 
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
@@ -47,11 +48,11 @@
        NAVIGATION BAR
        ========================================================================= -->
   <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center gap-4 lg:gap-6">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-6">
-        <a href="index.html" class="flex items-center gap-2 group" aria-label="CRUIZR Home">
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="index.html" class="flex items-center gap-2 group shrink-0" aria-label="CRUIZR Home">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-xl shadow-lg shadow-[#FFE600]/30 group-hover:scale-105 transition">
             <i data-lucide="zap" class="w-6 h-6 fill-black text-black"></i>
           </div>
@@ -66,7 +67,7 @@
       </div>
 
       <!-- Desktop Nav Links -->
-      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-gray-300" aria-label="Terms Navigation">
+      <nav class="hidden md:flex flex-1 min-w-0 items-center justify-center gap-5 xl:gap-7 text-sm font-semibold text-gray-300 whitespace-nowrap" aria-label="Terms Navigation">
         <a href="index.html#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
           <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
         </a>
@@ -79,8 +80,8 @@
       </nav>
 
       <!-- Action Button -->
-      <div class="flex items-center gap-3">
-        <a href="index.html#fleet-section" class="px-4 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition flex items-center gap-1.5 shadow-lg shadow-[#FFE600]/20">
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="index.html#fleet-section" class="px-3 lg:px-4 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition flex items-center gap-1.5 shadow-lg shadow-[#FFE600]/20 whitespace-nowrap">
           <span>Book a Ride</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </a>
@@ -167,7 +168,7 @@
           <ul class="list-disc list-inside space-y-2 text-gray-300 pl-2">
             <li><strong>Minimum Age:</strong> You must be at least 18 years of age at the time of reservation.</li>
             <li><strong>Valid Driving License:</strong> You must possess a valid, original Indian Driving License (LMV - Light Motor Vehicle) with no disqualifications. Learner licenses are strictly inadmissible.</li>
-            <li><strong>College Identification:</strong> To qualify for student perks, zero security deposit waivers, and the 25% discount, an active College ID Card or verified institution email (<code class="text-[#FFE600]">.edu</code> / university domain) must be submitted.</li>
+            <li><strong>College Identification:</strong> To explore student perks, prototype deposit-waiver concepts, and the 25% discount, an active College ID Card or verified institution email (<code class="text-[#FFE600]">.edu</code> / university domain) must be submitted.</li>
             <li><strong>Digital KYC:</strong> You agree to provide a clear selfie and front/back photos of your driving license prior to car unlock.</li>
           </ul>
         </section>
@@ -204,8 +205,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2 text-xs">
             <div class="p-4 rounded-xl bg-gray-900 border border-gray-800 space-y-2">
               <span class="font-bold text-white">Cancellation Guidelines</span>
-              <p>• <strong>&gt; 6 Hours before trip start:</strong> 100% full refund to original payment source.</p>
-              <p>• <strong>2 to 6 Hours before trip start:</strong> 50% refund or 100% CRUIZR wallet credits.</p>
+              <p>• <strong>&gt; 6 Hours before trip start:</strong> Illustrative full-refund flow to the original payment source, subject to applicable terms.</p>
+              <p>• <strong>2 to 6 Hours before trip start:</strong> Illustrative partial refund or CRUIZR wallet-credit flow, subject to applicable terms.</p>
               <p>• <strong>&lt; 2 Hours / No-Show:</strong> Non-refundable.</p>
             </div>
             <div class="p-4 rounded-xl bg-gray-900 border border-gray-800 space-y-2">
@@ -336,7 +337,7 @@
             <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
           </div>
           <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
-            The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
+            CRUIZR is a student-built prototype for college mobility. Pricing, availability, deposits, protection, support, and other operational details are for demonstration purposes only.
           </p>
           <div class="flex items-center gap-3 text-gray-400">
             <!-- Instagram (Coming Soon) -->
@@ -389,8 +390,8 @@
         <div>
           <p class="font-bold text-white uppercase tracking-wider mb-3">Student Programs</p>
           <ul class="space-y-2">
-            <li><a href="index.html#fleet-section" class="hover:text-[#FFE600] transition">Student Pass (25% OFF)</a></li>
-            <li><a href="index.html#host-section" class="hover:text-white transition">List Your Ride (Host)</a></li>
+            <li><a href="index.html?feature=student-pass" class="hover:text-[#FFE600] transition">Student Pass (25% OFF)</a></li>
+            <li><a href="index.html?feature=host" class="hover:text-white transition">List Your Ride (Host)</a></li>
             <li><a href="index.html#split-calculator" class="hover:text-white transition">Split Bill Calculator</a></li>
             <li><a href="index.html#roadtrips-section" class="hover:text-white transition">Road Trip Guides</a></li>
           </ul>
@@ -400,7 +401,7 @@
         <div>
           <p class="font-bold text-white uppercase tracking-wider mb-3">Safety & Trust</p>
           <ul class="space-y-2">
-            <li><a href="index.html#fleet-section" class="hover:text-white transition">Zero Deposit Policy</a></li>
+            <li><a href="index.html?feature=zero-deposit" class="hover:text-white transition">Prototype Zero-Deposit Concept</a></li>
             <li><a href="help.html#roadside-sos" class="hover:text-white transition">24/7 Roadside Assistance</a></li>
             <li><a href="terms.html" class="text-[#FFE600] font-bold transition">Terms & Privacy</a></li>
             <li><a href="help.html" class="hover:text-white transition">Help & Support</a></li>

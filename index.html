@@ -39,6 +39,7 @@
 
   <!-- Custom Theme CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 </head>
 
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
@@ -47,11 +48,11 @@
        1. NAVIGATION BAR
        ========================================================================= -->
   <header class="sticky top-0 z-50 glass-panel border-b border-gray-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center gap-4 lg:gap-6">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-6">
-        <a href="#hero-section" class="flex items-center gap-2 group" aria-label="CRUIZR Home">
+      <div class="flex items-center gap-3 lg:gap-4 shrink-0 min-w-0">
+        <a href="#hero-section" class="flex items-center gap-2 group shrink-0" aria-label="CRUIZR Home">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#FFE600] to-[#FF9900] flex items-center justify-center text-black font-black text-xl shadow-lg shadow-[#FFE600]/30 group-hover:scale-105 transition">
             <i data-lucide="zap" class="w-6 h-6 fill-black text-black"></i>
           </div>
@@ -65,27 +66,27 @@
         </a>
 
         <!-- Campus / City Switcher Pill -->
-        <button id="campus-dropdown-btn" type="button" aria-haspopup="dialog" aria-expanded="false" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-900/90 border border-gray-700/80 hover:border-[#FFE600] transition group focus:outline-none focus:ring-2 focus:ring-[#FFE600]">
+        <button id="campus-dropdown-btn" type="button" aria-haspopup="dialog" aria-expanded="false" class="hidden md:flex items-center gap-2 px-2.5 lg:px-3 py-2 rounded-xl bg-gray-900/90 border border-gray-700/80 hover:border-[#FFE600] transition group focus:outline-none focus:ring-2 focus:ring-[#FFE600] max-w-[15rem] shrink">
           <div class="w-6 h-6 rounded-full bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
             <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
           </div>
           <div class="text-left">
             <p class="text-[10px] text-gray-400 font-semibold uppercase">Campus Hub</p>
-            <p id="current-campus-label" class="text-xs font-bold text-white group-hover:text-[#FFE600] transition">Bangalore (Christ Univ)</p>
+            <p id="current-campus-label" class="text-xs font-bold text-white group-hover:text-[#FFE600] transition truncate">Bangalore (Christ Univ)</p>
           </div>
           <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[#FFE600] transition ml-1"></i>
         </button>
       </div>
 
       <!-- Desktop Nav Links -->
-      <nav class="hidden lg:flex items-center gap-7 text-sm font-semibold text-gray-300" aria-label="Main Navigation">
-        <a href="#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+      <nav class="hidden lg:flex flex-1 min-w-0 items-center justify-center gap-5 xl:gap-7 text-sm font-semibold text-gray-300 whitespace-nowrap" aria-label="Main Navigation">
+        <a href="#fleet-section" class="hover:text-[#FFE600] transition flex items-center gap-2">
           <i data-lucide="car" class="w-4 h-4 text-[#FFE600]"></i> Campus Fleet
         </a>
-        <a href="#split-calculator" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+        <a href="#split-calculator" class="hover:text-[#FFE600] transition flex items-center gap-2">
           <i data-lucide="calculator" class="w-4 h-4 text-[#FFE600]"></i> Split Bill
         </a>
-        <a href="#host-section" class="hover:text-[#FFE600] transition flex items-center gap-1.5">
+        <a href="#host-section" class="hover:text-[#FFE600] transition flex items-center gap-2">
           <i data-lucide="badge-percent" class="w-4 h-4 text-amber-400"></i> Host & Earn
         </a>
         <a href="#roadtrips-section" class="hover:text-white transition">Road Trips</a>
@@ -93,8 +94,13 @@
       </nav>
 
       <!-- Right CTAs & Dynamic Auth Container -->
-      <div id="auth-nav-container" class="flex items-center gap-3">
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="mobile-menu-btn" type="button" aria-label="Open mobile menu" class="lg:hidden p-2 rounded-xl text-gray-300 hover:text-[#FFE600] hover:bg-gray-900 transition focus:outline-none focus:ring-2 focus:ring-[#FFE600]">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div id="auth-nav-container" class="flex items-center gap-2">
         <!-- Rendered dynamically by app.js (Logged Out vs Logged In state) -->
+        </div>
       </div>
 
     </div>
@@ -217,11 +223,14 @@
               <p id="hero-date-error" class="hidden text-[10px] text-rose-400 mt-1 font-medium"></p>
             </div>
 
-            <!-- Search Action CTA -->
-            <div class="md:col-span-3 flex items-stretch">
+            <!-- Hero Actions -->
+            <div class="md:col-span-3 flex flex-col gap-2">
               <button id="hero-search-btn" type="button" class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#FFE600] to-[#FF9900] text-[#07090E] font-black text-sm uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/25 flex items-center justify-center gap-2">
-                <i data-lucide="search" class="w-4 h-4"></i> Find Cars
+                <i data-lucide="search" class="w-4 h-4"></i> Find My Ride
               </button>
+              <a id="hero-split-fare-btn" href="#split-calculator" class="w-full py-3 rounded-2xl bg-gray-800/90 border border-gray-700 text-gray-200 font-bold text-xs uppercase tracking-wider hover:border-[#FFE600] hover:text-white transition flex items-center justify-center gap-2">
+                <i data-lucide="calculator" class="w-4 h-4 text-[#FFE600]"></i> Calculate Split Fare
+              </a>
             </div>
           </div>
 
@@ -233,7 +242,7 @@
             </label>
 
             <div class="flex items-center gap-4 text-gray-400 text-[11px]">
-              <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#FFE600]"></i> Zero Deposit</span>
+              <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#FFE600]"></i> Prototype Zero-Deposit Concept</span>
               <span class="flex items-center gap-1"><i data-lucide="music" class="w-3.5 h-3.5 text-[#FFE600]"></i> Aux / Bluetooth Ready</span>
               <span class="flex items-center gap-1"><i data-lucide="credit-card" class="w-3.5 h-3.5 text-purple-400"></i> UPI Accepted</span>
             </div>
@@ -459,16 +468,16 @@
           </div>
           <h2 class="text-3xl sm:text-4xl font-black text-white font-heading">
             Got a Car at Home or Campus? <br />
-            <span class="text-gradient-lime">Earn ₹35,000+ / Month</span>
+            <span class="text-gradient-lime">Estimate Your Monthly Host Payout</span>
           </h2>
           <p class="text-sm text-gray-400 leading-relaxed">
-            Turn your car into a passive income stream when you're sitting in class or during semester breaks. Full ₹1 Crore comprehensive insurance + keyless smart IoT device installed for free.
+            Turn your car into a passive income concept when you're sitting in class or during semester breaks. Illustrative insurance concept + keyless smart IoT demo, subject to applicable terms.
           </p>
 
           <div class="grid grid-cols-2 gap-3 text-xs pt-2">
             <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
-              <p class="font-bold text-white">🛡️ ₹1 Cr Insurance</p>
-              <p class="text-[11px] text-gray-400 mt-0.5">Zero liability for host</p>
+              <p class="font-bold text-white">🛡️ Illustrative Insurance Concept</p>
+              <p class="text-[11px] text-gray-400 mt-0.5">Protection concept for hosts</p>
             </div>
             <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
               <p class="font-bold text-white">💸 Weekly UPI Payouts</p>
@@ -508,7 +517,7 @@
           <!-- Estimated Monthly Earnings -->
           <div class="p-4 rounded-xl bg-gray-800/80 border border-gray-700 flex items-center justify-between">
             <div>
-              <p class="text-[11px] text-gray-400 font-semibold">PROJECTED MONTHLY EARNINGS</p>
+              <p class="text-[11px] text-gray-400 font-semibold">ESTIMATED MONTHLY EARNINGS</p>
               <p class="text-xs text-amber-400 font-bold">Transferred directly via UPI</p>
             </div>
             <p id="host-earnings-result" class="text-3xl font-black text-white font-heading text-gradient-lime">₹28,125</p>
@@ -558,7 +567,7 @@
           </div>
           <h3 class="text-lg font-bold text-white">Zero Security Deposit</h3>
           <p class="text-xs text-gray-400 leading-relaxed">
-            Unlike traditional rentals that block ₹5,000–₹10,000 on your card, CRUIZR requires ₹0 deposit for all verified college students.
+            Unlike traditional rentals that may block ₹5,000–₹10,000 on your card, this prototype demonstrates a ₹0-deposit concept for verified college students, subject to applicable terms.
           </p>
         </div>
 
@@ -566,7 +575,7 @@
           <div class="w-12 h-12 rounded-xl bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
             <i data-lucide="smartphone" class="w-6 h-6"></i>
           </div>
-          <h3 class="text-lg font-bold text-white">100% Keyless App Unlock</h3>
+          <h3 class="text-lg font-bold text-white">Keyless App Unlock Demo</h3>
           <p class="text-xs text-gray-400 leading-relaxed">
             No meeting strangers or waiting for physical keys. Walk up to your car, tap 'Unlock' on your phone, and drive away anytime 24/7.
           </p>
@@ -683,7 +692,7 @@
             <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
           </div>
           <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
-            The next-generation self-drive car sharing platform designed for college students and young explorers across India. Zero deposit, transparent split pricing, and keyless convenience.
+            CRUIZR is a student-built prototype for college mobility. Pricing, availability, deposits, protection, support, and other operational details are for demonstration purposes only.
           </p>
           <div class="flex items-center gap-3 text-gray-400">
             <!-- Instagram (Coming Soon) -->
@@ -740,7 +749,7 @@
             <li><button type="button" class="open-ambassador-btn hover:text-white transition text-left">Campus Ambassador</button></li>
             <li><button type="button" class="open-host-modal-btn hover:text-white transition text-left">List Your Ride (Host)</button></li>
             <li><button type="button" class="open-sponsorship-btn hover:text-white transition text-left">College Fest Sponsorship</button></li>
-            <li><a href="#hero-section" class="hover:text-white transition">Night Owl Pack</a></li>
+            <li><button type="button" class="open-night-owl-btn hover:text-white transition text-left">Night Owl Pack</button></li>
           </ul>
         </div>
 
@@ -748,7 +757,7 @@
         <div>
           <p class="font-bold text-white uppercase tracking-wider mb-3">Safety & Trust</p>
           <ul class="space-y-2">
-            <li><button type="button" class="open-policy-btn hover:text-white transition text-left">Zero Deposit Policy</button></li>
+            <li><button type="button" class="open-policy-btn hover:text-white transition text-left">Prototype Zero-Deposit Concept</button></li>
             <li><button type="button" class="open-roadside-btn hover:text-white transition text-left">24/7 Roadside Assistance</button></li>
             <li><a href="terms.html" class="hover:text-white transition text-left">Terms & Privacy</a></li>
             <li><button type="button" class="open-damage-btn hover:text-white transition text-left">Damage Protection Cover</button></li>
