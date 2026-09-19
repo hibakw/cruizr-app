@@ -203,11 +203,18 @@
 
             <!-- Trip Dates -->
             <div class="md:col-span-4 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition">
-              <label for="hero-dates-input" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Dates (Fri 10:00 AM ➔ Sun 10:00 PM)</label>
-              <div class="flex items-center gap-2">
-                <i data-lucide="calendar" class="w-4 h-4 text-[#FFE600] flex-shrink-0"></i>
-                <input type="text" id="hero-dates-input" value="This Weekend (2 Days)" readonly class="w-full bg-transparent text-sm font-bold text-white focus:outline-none cursor-default" />
+              <label for="trip-start-date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Dates (Fri 10:00 AM ➔ Sun 10:00 PM)</label>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex items-center gap-1">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#FFE600] flex-shrink-0"></i>
+                  <input type="datetime-local" id="trip-start-date" aria-label="Pickup Date and Time" class="w-full bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer" />
+                </div>
+                <div class="flex items-center gap-1 border-l border-gray-800 pl-2">
+                  <input type="datetime-local" id="trip-end-date" aria-label="Drop-off Date and Time" class="w-full bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer" />
+                </div>
               </div>
+              <input type="hidden" id="hero-dates-input" value="This Weekend (2 Days)" />
+              <p id="hero-date-error" class="hidden text-[10px] text-rose-400 mt-1 font-medium"></p>
             </div>
 
             <!-- Search Action CTA -->
@@ -289,6 +296,9 @@
       <!-- Filter Controls Bar -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 mb-8 border border-gray-800 space-y-4">
         
+        <!-- Squad Filter Chip Container -->
+        <div id="squad-chip-container"></div>
+
         <!-- Category Filter Pills -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           <button type="button" class="category-pill active px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-[#FFE600] text-[#07090E]" data-category="all">
@@ -419,10 +429,16 @@
                 <p class="text-[10px] text-gray-400 font-bold uppercase">All Inclusive</p>
               </div>
             </div>
+            <p id="calc-error-msg" class="hidden text-xs text-rose-400 font-semibold -mt-2"></p>
 
-            <a href="#fleet-section" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
+            <a href="#fleet-section" id="find-cars-squad-btn" class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
               Find Cars For This Squad Size <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
+
+            <button type="button" id="calc-whatsapp-btn" class="w-full py-3 rounded-xl bg-[#25D366] text-black font-bold text-xs flex items-center justify-center gap-2 hover:brightness-110 transition shadow-lg shadow-[#25D366]/20">
+              <i data-lucide="share-2" class="w-4 h-4"></i> Share Split on WhatsApp
+            </button>
+            <p id="calc-whatsapp-hint" class="hidden text-[10px] text-gray-400 text-center -mt-2"></p>
           </div>
 
         </div>
