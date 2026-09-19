@@ -1,35 +1,53 @@
 // CRUIZR - Production Interactive Application Logic
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. App State
+  // 1. App Unified State (Single Source of Truth)
   const state = {
+    // City & Campus Hub
     selectedCity: "Bangalore",
     selectedHub: "Christ University & Koramangala Hub",
     selectedHubId: "blr-christ",
+    hubMultiplier: 1.0,
+
+    // Dates & Duration
+    startDate: getDefaultStartDate(),
+    endDate: getDefaultEndDate(),
+    days: 2,
+
+    // Squad Size & Filter
+    squadSize: 4,
+    squadFilterActive: false,
+
+    // Active Selection
+    selectedCar: null,
+
+    // Filters & Sort
+    filters: {
+      category: "all",
+      transmission: "all",
+      fuel: "all",
+      maxPrice: 7000,
+      sortBy: "recommended"
+    },
+
+    // Hero active booking mode tab
     activeTab: "weekend",
-    activeCategory: "all",
-    selectedTransmission: "all",
-    selectedFuel: "all",
-    maxPrice: 7000,
-    searchQuery: "",
-    sortBy: "recommended",
     
     // Auth State (persisted in localStorage)
     auth: getStoredAuth(),
 
-    // Booking Form State
+    // Booking Details (synced with state)
     bookingDetails: {
       pickupLocation: "Christ University & Koramangala Hub",
-      pickupDate: getTomorrowDateFormatted(),
-      pickupTime: "10:00 AM",
-      dropDate: getDayAfterTomorrowFormatted(),
-      dropTime: "10:00 AM",
+      pickupDate: formatDateHuman(getDefaultStartDate()),
+      pickupTime: formatTimeHuman(getDefaultStartDate()),
+      dropDate: formatDateHuman(getDefaultEndDate()),
+      dropTime: formatTimeHuman(getDefaultEndDate()),
       doorstepDelivery: true,
       durationDays: 2
     },
 
     // Active Car for Checkout Modal
-    selectedCar: null,
     friendCount: 4,
     appliedCoupon: null,
     protectionPlan: "standard",
@@ -44,9 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
     otpSecondsRemaining: 30
   };
 
+  // Expose state for automated verification/testing
+  window.CRUIZR_STATE = state;
+  window.syncAndRenderAll = syncAndRenderAll;
+  window.validateSplitInputs = validateSplitInputs;
+
+  const MAX_TRIP_DAYS = 30; // longest trip allowed (dates + split calculator)
+
   // Initial Boot
   initAuth();
   initNavigation();
+  initTripDates();
   initHeroWidget();
   initPromoRail();
   initCarCatalog();
@@ -58,6 +84,68 @@ document.addEventListener("DOMContentLoaded", () => {
   initWaitlist();
   initFooterModals();
   initModals();
+
+  // Initial sync across all components
+  syncAndRenderAll();
+
+  /* ==========================================================================
+     TRIP DATE HELPERS (shared by the date pickers and the days slider)
+     ========================================================================== */
+  function calcTripDays(startStr, endStr) {
+    const diffHours = (new Date(endStr) - new Date(startStr)) / (1000 * 60 * 60);
+    if (diffHours >= 58 && diffHours <= 62) return 2; // default weekend squad pack
+    return Math.max(1, Math.round(diffHours / 24));
+  }
+
+  // Single place that writes new trip dates into state + inputs + booking details
+  function applyTripDates(startStr, endStr) {
+    state.startDate = startStr;
+    state.endDate = endStr;
+    state.days = calcTripDays(startStr, endStr);
+
+    const startInput = document.getElementById("trip-start-date");
+    const endInput = document.getElementById("trip-end-date");
+    if (startInput) startInput.value = startStr;
+    if (endInput) endInput.value = endStr;
+
+    state.bookingDetails.durationDays = state.days;
+    state.bookingDetails.pickupDate = formatDateHuman(startStr);
+    state.bookingDetails.pickupTime = formatTimeHuman(startStr);
+    state.bookingDetails.dropDate = formatDateHuman(endStr);
+    state.bookingDetails.dropTime = formatTimeHuman(endStr);
+  }
+
+  /* ==========================================================================
+     UNIFIED SYNC & RENDER PIPELINE
+     ========================================================================== */
+  function syncAndRenderAll() {
+    // 1. Header Hub label & Hero pickup location
+    const currentCampusLabel = document.getElementById("current-campus-label");
+    const hubObj = APP_DATA.campusHubs.find(h => h.id === state.selectedHubId);
+    if (currentCampusLabel && hubObj) {
+      currentCampusLabel.textContent = `${state.selectedCity} (${hubObj.shortName || state.selectedHub.split('&')[0].trim()})`;
+    }
+    const heroLocationInput = document.getElementById("hero-pickup-location");
+    if (heroLocationInput) {
+      heroLocationInput.value = state.selectedHub;
+    }
+
+    // 2. Dates display & duration badge
+    const heroDatesInput = document.getElementById("hero-dates-input");
+    if (heroDatesInput) {
+      heroDatesInput.value = `${state.days} Days (${formatDateRange(state.startDate, state.endDate)})`;
+    }
+    const durationBadge = document.getElementById("hero-duration-badge");
+    if (durationBadge) {
+      durationBadge.textContent = `${state.days} Day${state.days > 1 ? 's' : ''}`;
+    }
+
+    // 3. Calculator & WhatsApp split generator
+    updateSplitFareWidget();
+
+    // 4. Combined Fleet Filters Engine
+    applyFilters();
+  }
 
   /* ==========================================================================
      1. AUTHENTICATION & SESSION MANAGEMENT (localStorage)
@@ -302,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     2. NAVIGATION & REAL CITY/CAMPUS SWITCHER LOGIC
+     2. NAVIGATION & CAMPUS HUB / CITY SWITCHER (ISSUE #13)
      ========================================================================== */
   function initNavigation() {
     const campusDropdownBtn = document.getElementById("campus-dropdown-btn");
@@ -311,25 +399,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const campusModal = document.getElementById("campus-modal");
     const closeCampusModal = document.getElementById("close-campus-modal");
     const campusListContainer = document.getElementById("campus-list");
-    const currentCampusLabel = document.getElementById("current-campus-label");
-
-    if (currentCampusLabel) {
-      currentCampusLabel.textContent = `${state.selectedCity} (${state.selectedHub.split("&")[0]})`;
-    }
 
     function renderCampusList() {
       if (!campusListContainer) return;
       campusListContainer.innerHTML = APP_DATA.campusHubs.map(hub => {
-        const isSelected = (hub.name === state.selectedHub);
+        const isSelected = (hub.id === state.selectedHubId);
         return `
-          <button type="button" class="campus-option flex items-center justify-between p-3.5 rounded-xl border ${isSelected ? 'border-[#FFE600] bg-[#121826]' : 'border-gray-800'} hover:border-[#FFE600] hover:bg-[#121826] transition text-left group w-full" data-id="${hub.id}" data-city="${hub.city}" data-name="${hub.name}">
+          <button type="button" class="campus-option flex items-center justify-between p-3.5 rounded-xl border ${isSelected ? 'border-[#FFE600] bg-[#121826]' : 'border-gray-800'} hover:border-[#FFE600] hover:bg-[#121826] transition text-left group w-full" data-id="${hub.id}" data-city="${hub.city}" data-name="${hub.name}" data-short="${hub.shortName || ''}" data-multiplier="${hub.priceMultiplier || 1.0}">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-lg bg-[#FFE600]/10 flex items-center justify-center text-[#FFE600] group-hover:scale-110 transition">
-                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                <i data-lucide="${hub.icon || 'graduation-cap'}" class="w-5 h-5"></i>
               </div>
               <div>
                 <p class="text-white font-medium text-sm group-hover:text-[#FFE600] transition">${hub.name}</p>
-                <p class="text-gray-400 text-xs">${hub.city} • ${hub.count} campus cars available</p>
+                <p class="text-gray-400 text-xs">${hub.city} • ${APP_DATA.cars.filter(c => c.city === hub.city).length} campus cars available</p>
               </div>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${isSelected ? 'bg-[#FFE600] text-black font-bold' : 'bg-gray-800/80 text-gray-300 border border-gray-700'}">
@@ -339,31 +422,18 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }).join("");
 
-      // Add click handlers to options
+      // Attach click listeners to campus options
       campusListContainer.querySelectorAll(".campus-option").forEach(btn => {
         btn.addEventListener("click", () => {
           const city = btn.getAttribute("data-city");
           const name = btn.getAttribute("data-name");
           const id = btn.getAttribute("data-id");
-          
-          state.selectedCity = city;
-          state.selectedHub = name;
-          state.selectedHubId = id;
-          state.bookingDetails.pickupLocation = name;
-          
-          if (currentCampusLabel) {
-            currentCampusLabel.textContent = `${city} (${name.split("&")[0]})`;
-          }
-          
-          const heroLocationInput = document.getElementById("hero-pickup-location");
-          if (heroLocationInput) {
-            heroLocationInput.value = name;
-          }
+          const mult = parseFloat(btn.getAttribute("data-multiplier")) || 1.0;
 
-          campusModal.classList.add("hidden");
-          showToast(`📍 Switched to ${name} (${city})`, "success");
-          filterAndRenderCars();
+          selectHub(id, city, name, mult);
+          campusModal?.classList.add("hidden");
           renderCampusList();
+          showToast(`📍 Switched to ${name} (${city})`, "success");
         });
       });
       lucide.createIcons();
@@ -372,16 +442,23 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCampusList();
 
     if (campusDropdownBtn && campusModal) {
-      campusDropdownBtn.addEventListener("click", () => campusModal.classList.remove("hidden"));
+      campusDropdownBtn.addEventListener("click", () => {
+        renderCampusList();
+        campusModal.classList.remove("hidden");
+      });
     }
     if (mobileCampusBtn && campusModal) {
       mobileCampusBtn.addEventListener("click", () => {
         document.getElementById("mobile-drawer")?.classList.add("translate-x-full");
+        renderCampusList();
         campusModal.classList.remove("hidden");
       });
     }
     if (heroHubTrigger && campusModal) {
-      heroHubTrigger.addEventListener("click", () => campusModal.classList.remove("hidden"));
+      heroHubTrigger.addEventListener("click", () => {
+        renderCampusList();
+        campusModal.classList.remove("hidden");
+      });
     }
     if (closeCampusModal && campusModal) {
       closeCampusModal.addEventListener("click", () => campusModal.classList.add("hidden"));
@@ -391,18 +468,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".hub-quick-link").forEach(btn => {
       btn.addEventListener("click", () => {
         const city = btn.getAttribute("data-city");
-        const hub = btn.getAttribute("data-hub");
-        if (city && hub) {
-          state.selectedCity = city;
-          state.selectedHub = hub;
-          state.bookingDetails.pickupLocation = hub;
-          if (currentCampusLabel) {
-            currentCampusLabel.textContent = `${city} (${hub.split("&")[0]})`;
-          }
-          const heroLocationInput = document.getElementById("hero-pickup-location");
-          if (heroLocationInput) heroLocationInput.value = hub;
-          showToast(`📍 Selected ${hub}`, "success");
-          filterAndRenderCars();
+        const hubName = btn.getAttribute("data-hub");
+        const found = APP_DATA.campusHubs.find(h => h.name === hubName || h.city === city);
+        if (found) {
+          selectHub(found.id, found.city, found.name, found.priceMultiplier || 1.0);
+          showToast(`📍 Selected ${found.name}`, "success");
           document.getElementById("fleet-section")?.scrollIntoView({ behavior: "smooth" });
         }
       });
@@ -424,8 +494,115 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function selectHub(id, city, name, multiplier = 1.0) {
+    state.selectedCity = city;
+    state.selectedHub = name;
+    state.selectedHubId = id;
+    state.hubMultiplier = multiplier;
+    state.bookingDetails.pickupLocation = name;
+
+    // Reset selectedCar if it doesn't belong to the new city
+    if (state.selectedCar && state.selectedCar.city !== city) {
+      state.selectedCar = null;
+    }
+
+    syncAndRenderAll();
+  }
+
   /* ==========================================================================
-     3. HERO TRIP WIDGET & SEARCH ENGINE
+     3. TRIP DATES ENGINE & VALIDATION (ISSUE #22)
+     ========================================================================== */
+  function initTripDates() {
+    const startInput = document.getElementById("trip-start-date");
+    const endInput = document.getElementById("trip-end-date");
+    const heroDateError = document.getElementById("hero-date-error");
+
+    const nowStr = formatDateTimeLocal(new Date());
+    if (startInput) {
+      startInput.min = nowStr;
+      startInput.value = state.startDate;
+    }
+    if (endInput) {
+      endInput.min = nowStr;
+      endInput.value = state.endDate;
+    }
+
+    let dateErrorTimer = null;
+    function showDateError(msg) {
+      if (!heroDateError) return;
+      heroDateError.textContent = msg;
+      heroDateError.classList.remove("hidden");
+      clearTimeout(dateErrorTimer);
+      dateErrorTimer = setTimeout(() => heroDateError.classList.add("hidden"), 4000);
+    }
+    // Put the inputs back to the last valid dates so the screen never shows
+    // dates that don't match the price being displayed.
+    function revertDateInputs() {
+      if (startInput) startInput.value = state.startDate;
+      if (endInput) endInput.value = state.endDate;
+    }
+
+    function onDateInputChange() {
+      const sVal = startInput ? startInput.value : state.startDate;
+      const eVal = endInput ? endInput.value : state.endDate;
+
+      if (!sVal || !eVal) {
+        showDateError("Please select both pickup and drop-off dates.");
+        revertDateInputs();
+        return false;
+      }
+
+      const sDate = new Date(sVal);
+      const eDate = new Date(eVal);
+      const now = new Date();
+
+      if (isNaN(sDate.getTime()) || isNaN(eDate.getTime())) {
+        showDateError("Invalid date format.");
+        revertDateInputs();
+        return false;
+      }
+
+      // Past date check (allow 1 minute grace)
+      if (sDate < new Date(now.getTime() - 60000)) {
+        showDateError("Pickup date cannot be in the past.");
+        revertDateInputs();
+        return false;
+      }
+
+      // End date must be strictly after start date
+      let finalEndStr = eVal;
+      let adjusted = false;
+      if (eDate <= sDate) {
+        // Auto-adjust end date to start + 2 days
+        finalEndStr = formatDateTimeLocal(new Date(sDate.getTime() + 2 * 24 * 60 * 60 * 1000));
+        adjusted = true;
+      }
+
+      // Maximum trip length (same limit as the split calculator)
+      if (calcTripDays(sVal, finalEndStr) > MAX_TRIP_DAYS) {
+        showDateError(`Trips can be booked for up to ${MAX_TRIP_DAYS} days. Please pick a shorter range.`);
+        revertDateInputs();
+        return false;
+      }
+
+      applyTripDates(sVal, finalEndStr);
+
+      if (adjusted) {
+        showDateError("Drop-off must be after pickup. Auto-adjusted to +2 days.");
+      } else if (heroDateError) {
+        heroDateError.classList.add("hidden");
+      }
+
+      syncAndRenderAll();
+      return true;
+    }
+
+    startInput?.addEventListener("change", onDateInputChange);
+    endInput?.addEventListener("change", onDateInputChange);
+  }
+
+  /* ==========================================================================
+     4. HERO TRIP WIDGET & SEARCH ENGINE
      ========================================================================== */
   function initHeroWidget() {
     const tabBtns = document.querySelectorAll(".hero-tab-btn");
@@ -475,7 +652,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     4. PROMO RAIL
+     5. PROMO RAIL
      ========================================================================== */
   function initPromoRail() {
     const promoContainer = document.getElementById("promo-carousel");
@@ -517,7 +694,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     5. CAR CATALOG & LIVE DATA-DRIVEN FILTER ENGINE
+     6. COMBINED FLEET FILTERS ENGINE (ISSUES #16 & #21)
      ========================================================================== */
   function initCarCatalog() {
     const categoryPills = document.querySelectorAll(".category-pill");
@@ -529,85 +706,126 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         pill.classList.remove("bg-gray-800/80", "text-gray-300");
         pill.classList.add("active", "bg-[#FFE600]", "text-[#07090E]", "font-bold");
-        state.activeCategory = pill.getAttribute("data-category");
-        filterAndRenderCars();
+        state.filters.category = pill.getAttribute("data-category");
+        applyFilters();
       });
     });
 
     const transmissionSelect = document.getElementById("filter-transmission");
     if (transmissionSelect) {
       transmissionSelect.addEventListener("change", (e) => {
-        state.selectedTransmission = e.target.value;
-        filterAndRenderCars();
+        state.filters.transmission = e.target.value;
+        applyFilters();
       });
     }
 
     const fuelSelect = document.getElementById("filter-fuel");
     if (fuelSelect) {
       fuelSelect.addEventListener("change", (e) => {
-        state.selectedFuel = e.target.value;
-        filterAndRenderCars();
+        state.filters.fuel = e.target.value;
+        applyFilters();
       });
     }
 
     const priceSlider = document.getElementById("price-range-slider");
     const priceLabel = document.getElementById("price-range-value");
     if (priceSlider && priceLabel) {
+      priceLabel.textContent = formatBudgetLabel(parseInt(priceSlider.value, 10) || 7000, priceSlider);
       priceSlider.addEventListener("input", (e) => {
-        state.maxPrice = parseInt(e.target.value);
-        priceLabel.textContent = `₹${state.maxPrice.toLocaleString("en-IN")}/day`;
-        filterAndRenderCars();
+        state.filters.maxPrice = parseInt(e.target.value, 10) || 7000;
+        priceLabel.textContent = formatBudgetLabel(state.filters.maxPrice, priceSlider);
+        applyFilters();
       });
     }
 
     const sortSelect = document.getElementById("filter-sort");
     if (sortSelect) {
       sortSelect.addEventListener("change", (e) => {
-        state.sortBy = e.target.value;
-        filterAndRenderCars();
+        state.filters.sortBy = e.target.value;
+        applyFilters();
       });
     }
-
-    filterAndRenderCars();
   }
 
-  function filterAndRenderCars() {
+  function applyFilters() {
     const fleetGrid = document.getElementById("fleet-grid");
     const carsCountLabel = document.getElementById("cars-count-label");
+    const chipContainer = document.getElementById("squad-chip-container");
     if (!fleetGrid) return;
 
+    // Render Squad Filter Chip if active (#16)
+    if (chipContainer) {
+      if (state.squadFilterActive) {
+        chipContainer.innerHTML = `
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/15 border border-[#FFE600]/40 text-xs text-white">
+            <span>Showing cars for a squad of ${state.squadSize}</span>
+            <button type="button" id="clear-squad-chip-btn" class="font-bold text-[#FFE600] hover:underline ml-1">Clear</button>
+          </div>
+        `;
+        document.getElementById("clear-squad-chip-btn")?.addEventListener("click", () => {
+          state.squadFilterActive = false;
+          applyFilters();
+        });
+      } else {
+        chipContainer.innerHTML = "";
+      }
+    }
+
+    // Combined AND Filter Logic
     let filtered = APP_DATA.cars.filter(car => {
-      // Category match
-      if (state.activeCategory !== "all" && car.category !== state.activeCategory) return false;
-      // Transmission match
-      if (state.selectedTransmission !== "all" && car.transmission.toLowerCase() !== state.selectedTransmission.toLowerCase()) return false;
-      // Fuel match
-      if (state.selectedFuel !== "all" && car.fuel.toLowerCase() !== state.selectedFuel.toLowerCase()) return false;
-      // Price match
-      if (car.pricePerDay > state.maxPrice) return false;
+      // 1. Hub / City match
+      if (car.city !== state.selectedCity) return false;
+
+      // 2. Category match (pocket/hatchback treated equivalently)
+      if (state.filters.category !== "all") {
+        const cat = state.filters.category.toLowerCase();
+        if (cat === "pocket" || cat === "hatchback") {
+          if (car.category !== "pocket" && car.category !== "hatchback") return false;
+        } else if (car.category !== cat) {
+          return false;
+        }
+      }
+
+      // 3. Transmission match
+      if (state.filters.transmission !== "all") {
+        if (car.transmission.toLowerCase() !== state.filters.transmission.toLowerCase()) return false;
+      }
+
+      // 4. Fuel match
+      if (state.filters.fuel !== "all") {
+        if (car.fuel.toLowerCase() !== state.filters.fuel.toLowerCase()) return false;
+      }
+
+      // 5. Budget slider match
+      // (slider parked at its max means "no limit", so pricier hubs never hide cars)
+      const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
+      const budgetSlider = document.getElementById("price-range-slider");
+      const sliderMax = budgetSlider ? parseInt(budgetSlider.max, 10) : 7000;
+      if (state.filters.maxPrice < sliderMax && dailyPrice > state.filters.maxPrice) return false;
+
+      // 6. Squad size passenger filter (#16)
+      if (state.squadFilterActive && car.seats < state.squadSize) {
+        return false;
+      }
+
       return true;
     });
 
-    // Sort by city match first if applicable, then user sort
-    if (state.sortBy === "price-low") {
-      filtered.sort((a, b) => a.pricePerDay - b.pricePerDay);
-    } else if (state.sortBy === "price-high") {
-      filtered.sort((a, b) => b.pricePerDay - a.pricePerDay);
-    } else if (state.sortBy === "rating") {
+    // Sort order
+    if (state.filters.sortBy === "price-low") {
+      filtered.sort((a, b) => (a.pricePerDay * state.hubMultiplier) - (b.pricePerDay * state.hubMultiplier));
+    } else if (state.filters.sortBy === "price-high") {
+      filtered.sort((a, b) => (b.pricePerDay * state.hubMultiplier) - (a.pricePerDay * state.hubMultiplier));
+    } else if (state.filters.sortBy === "rating") {
       filtered.sort((a, b) => b.rating - a.rating);
-    } else {
-      // Default: Prioritize current selected city
-      filtered.sort((a, b) => {
-        const aMatches = (a.city === state.selectedCity) ? 1 : 0;
-        const bMatches = (b.city === state.selectedCity) ? 1 : 0;
-        return bMatches - aMatches;
-      });
     }
 
+    // Live count label
     if (carsCountLabel) {
-      carsCountLabel.textContent = `Showing ${filtered.length} cars available (${state.selectedCity} Hub)`;
+      carsCountLabel.textContent = `Showing ${filtered.length} car${filtered.length === 1 ? "" : "s"} found (${state.selectedCity} Hub)`;
     }
 
+    // Empty state
     if (filtered.length === 0) {
       fleetGrid.innerHTML = `
         <div class="col-span-full py-16 text-center glass-card rounded-2xl border border-gray-800">
@@ -615,32 +833,23 @@ document.addEventListener("DOMContentLoaded", () => {
             <i data-lucide="car" class="w-8 h-8"></i>
           </div>
           <h3 class="text-xl font-bold text-white mb-2">No Cars Found Matching Filters</h3>
-          <p class="text-gray-400 text-xs max-w-md mx-auto mb-6">Try raising your price slider or resetting fuel and transmission filters.</p>
+          <p class="text-gray-400 text-xs max-w-md mx-auto mb-6">Try raising your price slider or resetting fuel, transmission, or squad filters.</p>
           <button type="button" id="reset-filters-btn" class="px-6 py-2.5 rounded-xl bg-[#FFE600] text-[#07090E] font-bold text-xs uppercase tracking-wider hover:brightness-110 transition">Reset All Filters</button>
         </div>
       `;
-      document.getElementById("reset-filters-btn")?.addEventListener("click", () => {
-        state.activeCategory = "all";
-        state.selectedTransmission = "all";
-        state.selectedFuel = "all";
-        state.maxPrice = 7000;
-        const slider = document.getElementById("price-range-slider");
-        if (slider) slider.value = 7000;
-        const priceLabel = document.getElementById("price-range-value");
-        if (priceLabel) priceLabel.textContent = "₹7,000/day";
-        initCarCatalog();
-      });
+      document.getElementById("reset-filters-btn")?.addEventListener("click", resetAllFilters);
       lucide.createIcons();
       return;
     }
 
+    // Render Car Cards
     fleetGrid.innerHTML = filtered.map(car => {
-      const splitCost = Math.ceil(car.pricePerDay / 4);
+      const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
+      const splitCost = Math.ceil(dailyPrice / state.squadSize);
       const isLocalCity = (car.city === state.selectedCity);
 
       return `
         <div class="car-card-container glass-card rounded-2xl border border-gray-800 hover:border-[#FFE600]/50 transition-all duration-300 flex flex-col group">
-          
           <!-- Interactive Floating Hover Bubble -->
           <div class="info-bubble" aria-hidden="true">
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FFE600]"></i>
@@ -658,7 +867,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${car.zeroDeposit ? `<span class="text-xs font-bold px-2 py-1 rounded-full bg-amber-950/85 backdrop-blur-md text-amber-300 border border-amber-500/30">₹0 Deposit</span>` : ""}
             </div>
 
-            <!-- Rating & Quick Peek trigger -->
+            <!-- Rating & Specs trigger -->
             <div class="absolute top-3 right-3 flex items-center gap-1.5 z-20">
               <button type="button" class="quick-peek-btn quick-peek-trigger px-2.5 py-1 rounded-full bg-black/80 hover:bg-[#FFE600] hover:text-black backdrop-blur-md text-[11px] font-bold text-gray-200 border border-gray-700 shadow-lg flex items-center gap-1 transition" data-car-id="${car.id}" aria-label="Quick specs for ${car.name}">
                 <i data-lucide="info" class="w-3 h-3"></i> Specs
@@ -669,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
 
-            <!-- Distance & Campus tag -->
+            <!-- Location tag -->
             <div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-xs text-gray-300 z-10">
               <span class="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded-md text-[11px] ${isLocalCity ? 'text-[#FFE600]' : 'text-gray-300'}">
                 <i data-lucide="map-pin" class="w-3 h-3 text-[#FFE600]"></i> ${isLocalCity ? car.location : `${car.city} Hub`}
@@ -717,11 +926,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="pt-3 border-t border-gray-800/80 flex items-center justify-between">
               <div>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-xl font-extrabold text-white">₹${car.pricePerDay.toLocaleString("en-IN")}</span>
+                  <span class="text-xl font-extrabold text-white">₹${dailyPrice.toLocaleString("en-IN")}</span>
                   <span class="text-xs text-gray-400 font-medium">/day</span>
                 </div>
                 <p class="text-[11px] text-[#FFE600] font-semibold flex items-center gap-1 mt-0.5">
-                  <i data-lucide="users" class="w-3 h-3"></i> ₹${splitCost}/person (4 friends)
+                  <i data-lucide="users" class="w-3 h-3"></i> ₹${splitCost}/person (${state.squadSize} friends)
                 </p>
               </div>
 
@@ -752,51 +961,251 @@ document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
   }
 
+  function formatBudgetLabel(value, sliderEl) {
+    const max = sliderEl ? parseInt(sliderEl.max, 10) : 7000;
+    return `₹${value.toLocaleString("en-IN")}${value >= max ? "+" : ""}/day`;
+  }
+
+  function resetAllFilters() {
+    state.filters.category = "all";
+    state.filters.transmission = "all";
+    state.filters.fuel = "all";
+    state.filters.maxPrice = 7000;
+    state.filters.sortBy = "recommended";
+    state.squadFilterActive = false;
+
+    document.querySelectorAll(".category-pill").forEach(p => {
+      if (p.getAttribute("data-category") === "all") {
+        p.classList.add("active", "bg-[#FFE600]", "text-[#07090E]", "font-bold");
+        p.classList.remove("bg-gray-800/80", "text-gray-300");
+      } else {
+        p.classList.remove("active", "bg-[#FFE600]", "text-[#07090E]", "font-bold");
+        p.classList.add("bg-gray-800/80", "text-gray-300");
+      }
+    });
+
+    const trans = document.getElementById("filter-transmission");
+    if (trans) trans.value = "all";
+    const fuel = document.getElementById("filter-fuel");
+    if (fuel) fuel.value = "all";
+    const slider = document.getElementById("price-range-slider");
+    if (slider) slider.value = 7000;
+    const priceVal = document.getElementById("price-range-value");
+    if (priceVal) priceVal.textContent = formatBudgetLabel(7000, slider);
+    const sort = document.getElementById("filter-sort");
+    if (sort) sort.value = "recommended";
+
+    syncAndRenderAll();
+  }
+
   /* ==========================================================================
-     6. SQUAD SPLIT-CALCULATOR MATH & LOGIC
+     7. SQUAD SPLIT-CALCULATOR MATH & INPUT VALIDATION (ISSUES #16, #17, #20)
      ========================================================================== */
   function initSplitFareWidget() {
+    const friendSlider = document.getElementById("calc-friend-slider");
+    const daysSlider = document.getElementById("calc-days-slider");
+    const findCarsBtn = document.getElementById("find-cars-squad-btn");
+
+    if (friendSlider) {
+      friendSlider.addEventListener("input", (e) => {
+        state.squadSize = parseInt(e.target.value, 10) || 4;
+        updateSplitFareWidget();
+        applyFilters();
+      });
+    }
+
+    if (daysSlider) {
+      daysSlider.addEventListener("input", (e) => {
+        const v = parseInt(e.target.value, 10);
+        if (!Number.isInteger(v) || v < 1 || v > MAX_TRIP_DAYS) {
+          updateSplitFareWidget(); // shows the validation message, keeps last good state
+          return;
+        }
+        // Drop-off = pickup + N days, so the date pickers always match the slider
+        const pickup = new Date(state.startDate);
+        if (!isNaN(pickup.getTime())) {
+          applyTripDates(state.startDate, formatDateTimeLocal(new Date(pickup.getTime() + v * 24 * 60 * 60 * 1000)));
+          document.getElementById("hero-date-error")?.classList.add("hidden");
+        } else {
+          state.days = v;
+        }
+        syncAndRenderAll();
+      });
+    }
+
+    // ISSUE #16: "Find Cars For This Squad Size" button
+    if (findCarsBtn) {
+      findCarsBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        state.squadFilterActive = true;
+        document.getElementById("fleet-section")?.scrollIntoView({ behavior: "smooth" });
+        applyFilters();
+      });
+    }
+  }
+
+  function validateSplitInputs(friendsVal, daysVal) {
+    if (friendsVal === "" || friendsVal === null || friendsVal === undefined ||
+        daysVal === "" || daysVal === null || daysVal === undefined) {
+      return { isValid: false, error: "Friend count and trip duration cannot be empty." };
+    }
+
+    const sFriends = String(friendsVal).trim();
+    const sDays = String(daysVal).trim();
+
+    if (sFriends === "" || sDays === "") {
+      return { isValid: false, error: "Friend count and trip duration cannot be empty." };
+    }
+
+    // Non-numeric check
+    if (!/^-?\d+(\.\d+)?$/.test(sFriends) || !/^-?\d+(\.\d+)?$/.test(sDays)) {
+      return { isValid: false, error: "Please enter valid numeric digits only." };
+    }
+
+    // Decimals rejected (whole numbers only)
+    if (sFriends.includes(".") || sDays.includes(".")) {
+      return { isValid: false, error: "Values must be whole numbers only (no decimals allowed)." };
+    }
+
+    const friends = parseInt(sFriends, 10);
+    const days = parseInt(sDays, 10);
+
+    if (isNaN(friends) || isNaN(days)) {
+      return { isValid: false, error: "Please enter valid numbers." };
+    }
+
+    // Zero and negative check
+    if (friends <= 0 || days <= 0) {
+      return { isValid: false, error: "Values must be positive numbers greater than zero." };
+    }
+
+    // Extreme value check
+    if (friends > 7) {
+      return { isValid: false, error: "Maximum squad size allowed is 7 friends." };
+    }
+    if (days > 30) {
+      return { isValid: false, error: "Maximum trip duration allowed is 30 days." };
+    }
+
+    return { isValid: true, friends, days };
+  }
+
+  function updateSplitFareWidget() {
     const friendSlider = document.getElementById("calc-friend-slider");
     const friendCountLabel = document.getElementById("calc-friend-count");
     const daysSlider = document.getElementById("calc-days-slider");
     const daysCountLabel = document.getElementById("calc-days-count");
     const perPersonResult = document.getElementById("calc-per-person-result");
     const totalEstResult = document.getElementById("calc-total-est-result");
+    const calcErrorMsg = document.getElementById("calc-error-msg");
+    const whatsappBtn = document.getElementById("calc-whatsapp-btn");
+    const whatsappHint = document.getElementById("calc-whatsapp-hint");
 
-    function updateCalc() {
-      const friends = Math.max(1, parseInt(friendSlider?.value || 4));
-      const days = Math.max(1, parseInt(daysSlider?.value || 2));
-      
-      if (friendCountLabel) friendCountLabel.textContent = `${friends} Friend${friends > 1 ? 's' : ''}`;
-      if (daysCountLabel) daysCountLabel.textContent = `${days} Day${days > 1 ? 's' : ''}`;
+    const friendsRaw = friendSlider ? friendSlider.value : String(state.squadSize);
+    const daysRaw = String(state.days); // dates are the source of truth (trips can be longer than the 1-5 day slider)
 
-      // Accurate Math Formula:
-      // Base rent: ₹1,799/day, Fuel estimate: ₹800/day, Toll/FASTag: ₹400/day
-      const dailyRent = 1799;
-      const dailyFuel = 800;
-      const dailyToll = 400;
-      
-      const total = (dailyRent + dailyFuel + dailyToll) * days;
-      const perPerson = Math.ceil(total / friends);
+    const validation = validateSplitInputs(friendsRaw, daysRaw);
 
-      if (totalEstResult) totalEstResult.textContent = total.toLocaleString("en-IN");
-      if (perPersonResult) perPersonResult.textContent = `₹${perPerson.toLocaleString("en-IN")}`;
+    if (!validation.isValid) {
+      if (calcErrorMsg) {
+        calcErrorMsg.textContent = `⚠️ ${validation.error}`;
+        calcErrorMsg.classList.remove("hidden");
+      }
+      if (whatsappBtn) {
+        whatsappBtn.disabled = true;
+        whatsappBtn.classList.add("opacity-50", "cursor-not-allowed");
+      }
+      if (whatsappHint) {
+        whatsappHint.textContent = "Fix calculator input errors to generate WhatsApp split link.";
+        whatsappHint.classList.remove("hidden");
+      }
+      return;
     }
 
-    if (friendSlider) friendSlider.addEventListener("input", updateCalc);
-    if (daysSlider) daysSlider.addEventListener("input", updateCalc);
-    updateCalc();
+    // Input is valid
+    if (calcErrorMsg) {
+      calcErrorMsg.classList.add("hidden");
+      calcErrorMsg.textContent = "";
+    }
+    if (whatsappBtn) {
+      whatsappBtn.disabled = false;
+      whatsappBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    }
+    if (whatsappHint) {
+      whatsappHint.classList.add("hidden");
+    }
+
+    const friends = validation.friends;
+    const days = validation.days;
+    state.squadSize = friends;
+    state.days = days;
+
+    if (friendCountLabel) friendCountLabel.textContent = `${friends} Friend${friends > 1 ? 's' : ''}`;
+    // Slider only goes to its own max (5); the label always shows the real trip length
+    if (daysSlider) daysSlider.value = Math.min(days, parseInt(daysSlider.max, 10) || 5);
+    if (daysCountLabel) daysCountLabel.textContent = `${days} Day${days > 1 ? 's' : ''}`;
+
+    // Base math formula:
+    // Default Bangalore (multiplier 1.0): Daily Rent 1799, Fuel 800, Toll 400 = 2999/day
+    // For 2 days, 4 friends: total = 5998, perPerson = ceil(5998 / 4) = 1500
+    // If the person has picked a car, use its real daily rent; otherwise the campus average
+    const rentCar = (state.selectedCar && state.selectedCar.city === state.selectedCity) ? state.selectedCar : null;
+    const dailyRent = rentCar
+      ? Math.round(rentCar.pricePerDay * state.hubMultiplier)
+      : Math.round(1799 * state.hubMultiplier);
+    const dailyFuel = 800;
+    const dailyToll = 400;
+
+    const total = (dailyRent + dailyFuel + dailyToll) * days;
+    const perPerson = Math.ceil(total / friends);
+
+    if (totalEstResult) totalEstResult.textContent = total.toLocaleString("en-IN");
+    if (perPersonResult) perPersonResult.textContent = `₹${perPerson.toLocaleString("en-IN")}`;
+
+    // Update WhatsApp pre-filled message (#17)
+    updateWhatsAppSplitUrl(total, perPerson, rentCar);
   }
 
   /* ==========================================================================
-     7. BOOKING CHECKOUT MODAL & CONFIRMATION
+     8. WHATSAPP SPLIT-MESSAGE GENERATOR (ISSUE #17)
+     ========================================================================== */
+  function updateWhatsAppSplitUrl(total, perPerson, rentCar) {
+    const whatsappBtn = document.getElementById("calc-whatsapp-btn");
+    if (!whatsappBtn) return;
+
+    const carName = rentCar ? rentCar.name : "Any CRUIZR car (campus-average estimate)";
+
+    const sDate = formatDateHuman(state.startDate);
+    const sTime = formatTimeHuman(state.startDate);
+    const eDate = formatDateHuman(state.endDate);
+    const eTime = formatTimeHuman(state.endDate);
+    const dateRange = (sDate && eDate) ? `${sDate} ${sTime} ➔ ${eDate} ${eTime}` : "Upcoming Road Trip";
+
+    const msg = `Hey squad! Here's our road trip split on CRUIZR 🚗💨\n` +
+      `Car: ${carName}\n` +
+      `Duration: ${state.days} Days (${dateRange})\n` +
+      `Total Cost: ₹${total.toLocaleString("en-IN")}\n` +
+      `Squad Size: ${state.squadSize} friends\n` +
+      `Cost per person: ₹${perPerson.toLocaleString("en-IN")}\n\n` +
+      `Booked via CRUIZR (Zero Security Deposit)`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+    whatsappBtn.onclick = (e) => {
+      e.preventDefault();
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+  }
+
+  /* ==========================================================================
+     9. BOOKING CHECKOUT MODAL & CONFIRMATION
      ========================================================================== */
   function openBookingModal(carId) {
     const car = APP_DATA.cars.find(c => c.id === carId);
     if (!car) return;
     state.selectedCar = car;
+    updateSplitFareWidget();
 
-    // Auto apply student coupon if user is logged in
     if (state.auth.isLoggedIn && !state.appliedCoupon) {
       state.appliedCoupon = APP_DATA.promoCodes.find(p => p.code === "STUDENT25");
     }
@@ -814,8 +1223,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const car = state.selectedCar;
     if (!modalBody || !car) return;
 
-    const days = state.bookingDetails.durationDays || 2;
-    const baseFare = car.pricePerDay * days;
+    const days = state.days || 2;
+    const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
+    const baseFare = dailyPrice * days;
     const doorstepFee = state.includeDoorstepDelivery ? 249 : 0;
     const protectionFee = state.protectionPlan === "zero-liability" ? (199 * days) : 0;
     
@@ -858,13 +1268,13 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="grid grid-cols-2 gap-3 text-sm">
               <div class="p-3 rounded-xl bg-gray-800/50 border border-gray-700/60">
                 <p class="text-[11px] text-gray-400 font-semibold">PICKUP</p>
-                <p class="font-bold text-white mt-1">${state.bookingDetails.pickupDate}</p>
-                <p class="text-xs text-gray-400">${state.bookingDetails.pickupTime}</p>
+                <p class="font-bold text-white mt-1">${formatDateHuman(state.startDate)}</p>
+                <p class="text-xs text-gray-400">${formatTimeHuman(state.startDate)}</p>
               </div>
               <div class="p-3 rounded-xl bg-gray-800/50 border border-gray-700/60">
                 <p class="text-[11px] text-gray-400 font-semibold">DROP-OFF</p>
-                <p class="font-bold text-white mt-1">${state.bookingDetails.dropDate}</p>
-                <p class="text-xs text-gray-400">${state.bookingDetails.dropTime}</p>
+                <p class="font-bold text-white mt-1">${formatDateHuman(state.endDate)}</p>
+                <p class="text-xs text-gray-400">${formatTimeHuman(state.endDate)}</p>
               </div>
             </div>
           </div>
@@ -995,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     document.getElementById("modal-friend-slider")?.addEventListener("input", (e) => {
-      state.friendCount = parseInt(e.target.value);
+      state.friendCount = parseInt(e.target.value, 10);
       renderBookingModalContent();
     });
 
@@ -1027,7 +1437,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("login-modal")?.classList.remove("hidden");
         return;
       }
-      document.getElementById("booking-modal").classList.add("hidden");
+      document.getElementById("booking-modal")?.classList.add("hidden");
       openConfirmationModal(totalAmount, perPersonShare);
     });
 
@@ -1102,7 +1512,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("share-whatsapp-btn")?.addEventListener("click", () => {
       const text = encodeURIComponent(`Hey squad! I've booked our self-drive car (${car.name}) on CRUIZR for our road trip! 🚗💨 Total is ₹${total}, each person's share is ₹${perPerson}. Let's roll!`);
-      window.open(`https://wa.me/?text=${text}`, "_blank");
+      window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
     });
 
     document.getElementById("done-ticket-btn")?.addEventListener("click", () => {
@@ -1113,7 +1523,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     8. QUICK PEEK MODAL
+     10. QUICK PEEK MODAL
      ========================================================================== */
   function openQuickPeekModal(carId) {
     const car = APP_DATA.cars.find(c => c.id === carId);
@@ -1123,6 +1533,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalTitle = document.getElementById("info-modal-title");
     const modalBody = document.getElementById("info-modal-body");
     if (!modal || !modalTitle || !modalBody) return;
+
+    const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
 
     modalTitle.textContent = `${car.name} (${car.year})`;
     modalBody.innerHTML = `
@@ -1154,7 +1566,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="text-xs text-gray-400 leading-relaxed">${car.desc}</p>
 
       <button type="button" id="quick-peek-book-btn" class="w-full py-3 rounded-xl bg-[#FFE600] text-black font-extrabold text-xs uppercase tracking-wider hover:brightness-110 transition shadow-lg shadow-[#FFE600]/20">
-        Book This Ride (₹${car.pricePerDay}/day) →
+        Book This Ride (₹${dailyPrice.toLocaleString("en-IN")}/day) →
       </button>
     `;
 
@@ -1168,7 +1580,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     9. STUDENT HOST CALCULATOR
+     11. STUDENT HOST CALCULATOR
      ========================================================================== */
   function initHostCalculator() {
     const carPills = document.querySelectorAll(".host-car-pill");
@@ -1207,7 +1619,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (daysSlider) {
       daysSlider.addEventListener("input", (e) => {
-        state.hostDays = parseInt(e.target.value);
+        state.hostDays = parseInt(e.target.value, 10);
         updateHostEarnings();
       });
     }
@@ -1216,7 +1628,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     10. ROAD TRIPS, TESTIMONIALS & FAQS
+     12. ROAD TRIPS, TESTIMONIALS & FAQS
      ========================================================================== */
   function initRoadTrips() {
     const container = document.getElementById("roadtrips-grid");
@@ -1316,8 +1728,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     11. WAITLIST & FOOTER MODALS
-     ========================================================================= */
+     13. WAITLIST & FOOTER MODALS
+     ========================================================================== */
   function initWaitlist() {
     const waitlistForm = document.getElementById("beta-waitlist-form");
     const waitlistInput = document.getElementById("waitlist-email");
@@ -1451,7 +1863,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     12. GENERAL MODALS & DIALOGS
+     14. GENERAL MODALS & HOST LEAD VALIDATION
      ========================================================================= */
   function initModals() {
     const closeLoginBtn = document.getElementById("close-login-modal");
@@ -1644,18 +2056,61 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ==========================================================================
-     HELPERS & UTILS
-     ========================================================================= */
-  function getTomorrowDateFormatted() {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
+     15. HELPERS & UTILS
+     ========================================================================== */
+  function formatDateTimeLocal(date) {
+    const pad = n => String(n).padStart(2, '0');
+    const y = date.getFullYear();
+    const m = pad(date.getMonth() + 1);
+    const d = pad(date.getDate());
+    const h = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    return `${y}-${m}-${d}T${h}:${min}`;
   }
 
-  function getDayAfterTomorrowFormatted() {
-    const d = new Date();
-    d.setDate(d.getDate() + 3);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
+  function getDefaultStartDate() {
+    const now = new Date();
+    const d = new Date(now);
+    const day = d.getDay();
+    let daysUntilFriday = (5 - day + 7) % 7;
+    if (daysUntilFriday === 0 && d.getHours() >= 10) {
+      daysUntilFriday = 7;
+    } else if (daysUntilFriday === 0) {
+      daysUntilFriday = 0;
+    }
+    d.setDate(d.getDate() + (daysUntilFriday === 0 ? 7 : daysUntilFriday));
+    d.setHours(10, 0, 0, 0);
+    return formatDateTimeLocal(d);
+  }
+
+  function getDefaultEndDate() {
+    const start = new Date(getDefaultStartDate());
+    const end = new Date(start);
+    end.setDate(start.getDate() + 2);
+    end.setHours(22, 0, 0, 0);
+    return formatDateTimeLocal(end);
+  }
+
+  function formatDateHuman(dtString) {
+    if (!dtString) return "";
+    const d = new Date(dtString);
+    if (isNaN(d.getTime())) return dtString;
+    return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+
+  function formatTimeHuman(dtString) {
+    if (!dtString) return "";
+    const d = new Date(dtString);
+    if (isNaN(d.getTime())) return dtString;
+    return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  }
+
+  function formatDateRange(startStr, endStr) {
+    const sDate = formatDateHuman(startStr);
+    const sTime = formatTimeHuman(startStr);
+    const eDate = formatDateHuman(endStr);
+    const eTime = formatTimeHuman(endStr);
+    return `${sDate} ${sTime} ➔ ${eDate} ${eTime}`;
   }
 
   function showToast(message, type = "info") {
