@@ -37,6 +37,30 @@ body {
   overflow-x: hidden;
 }
 
+/* Keep the desktop header readable when all navigation controls are visible. */
+@media (min-width: 1024px) and (max-width: 1535px) {
+  header > div {
+    gap: 1rem;
+  }
+
+  header nav {
+    gap: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  header nav a {
+    gap: 0.35rem;
+  }
+
+  header #campus-dropdown-btn {
+    max-width: 13rem;
+  }
+
+  header #auth-nav-container .open-login-btn:first-child {
+    display: none;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

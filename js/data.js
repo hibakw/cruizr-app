@@ -8,19 +8,19 @@ const APP_DATA = {
   },
   
   campusHubs: [
-    { id: "blr-christ", city: "Bangalore", name: "Christ University & Koramangala Hub", shortName: "Christ Univ", priceMultiplier: 1.0, count: 8, icon: "graduation-cap" },
-    { id: "blr-pes", city: "Bangalore", name: "PES Univ & Electronic City Hub", shortName: "PES Univ", priceMultiplier: 1.03, count: 6, icon: "graduation-cap" },
-    { id: "del-north", city: "Delhi NCR", name: "Delhi University North Campus", shortName: "DU North", priceMultiplier: 0.95, count: 8, icon: "graduation-cap" },
-    { id: "del-south", city: "Delhi NCR", name: "Hauz Khas & South Campus Hub", shortName: "Hauz Khas", priceMultiplier: 1.05, count: 7, icon: "graduation-cap" },
-    { id: "del-noida", city: "Delhi NCR", name: "Amity Noida & Knowledge Park", shortName: "Amity Noida", priceMultiplier: 0.98, count: 6, icon: "graduation-cap" },
-    { id: "pune-symbiosis", city: "Pune", name: "Symbiosis Viman Nagar Hub", shortName: "Symbiosis", priceMultiplier: 1.02, count: 8, icon: "graduation-cap" },
-    { id: "pune-fc", city: "Pune", name: "FC Road & MIT Kothrud Hub", shortName: "FC Road", priceMultiplier: 0.96, count: 6, icon: "graduation-cap" },
-    { id: "mum-bandra", city: "Mumbai", name: "Bandra & Mithibai / NMIMS Hub", shortName: "Bandra", priceMultiplier: 1.15, count: 7, icon: "graduation-cap" },
-    { id: "mum-powai", city: "Mumbai", name: "IIT Bombay & Powai Hub", shortName: "IIT Powai", priceMultiplier: 1.10, count: 6, icon: "graduation-cap" },
-    { id: "chn-vit", city: "Chennai / Vellore", name: "VIT & OMR Tech Corridor", shortName: "VIT Chennai", priceMultiplier: 0.92, count: 6, icon: "graduation-cap" },
-    { id: "manipal", city: "Manipal", name: "Manipal University Campus Hub", shortName: "Manipal Univ", priceMultiplier: 0.94, count: 6, icon: "graduation-cap" },
-    { id: "goa-bits", city: "Goa", name: "BITS Goa & Panjim Coastal Hub", shortName: "BITS Goa", priceMultiplier: 1.20, count: 8, icon: "palmtree" },
-    { id: "hyd-gachibowli", city: "Hyderabad", name: "IIIT / Gachibowli Univ Hub", shortName: "IIIT Gachibowli", priceMultiplier: 1.04, count: 6, icon: "graduation-cap" }
+    { id: "blr-christ", city: "Bangalore", name: "Christ University & Koramangala Hub", shortName: "Christ Univ", priceMultiplier: 1.0, count: 7, icon: "graduation-cap" },
+    { id: "blr-pes", city: "Bangalore", name: "PES Univ & Electronic City Hub", shortName: "PES Univ", priceMultiplier: 1.03, count: 1, icon: "graduation-cap" },
+    { id: "del-north", city: "Delhi NCR", name: "Delhi University North Campus", shortName: "DU North", priceMultiplier: 0.95, count: 2, icon: "graduation-cap" },
+    { id: "del-south", city: "Delhi NCR", name: "Hauz Khas & South Campus Hub", shortName: "Hauz Khas", priceMultiplier: 1.05, count: 2, icon: "graduation-cap" },
+    { id: "del-noida", city: "Delhi NCR", name: "Amity Noida & Knowledge Park", shortName: "Amity Noida", priceMultiplier: 0.98, count: 1, icon: "graduation-cap" },
+    { id: "pune-symbiosis", city: "Pune", name: "Symbiosis Viman Nagar Hub", shortName: "Symbiosis", priceMultiplier: 1.02, count: 2, icon: "graduation-cap" },
+    { id: "pune-fc", city: "Pune", name: "FC Road & MIT Kothrud Hub", shortName: "FC Road", priceMultiplier: 0.96, count: 2, icon: "graduation-cap" },
+    { id: "mum-bandra", city: "Mumbai", name: "Bandra & Mithibai / NMIMS Hub", shortName: "Bandra", priceMultiplier: 1.15, count: 3, icon: "graduation-cap" },
+    { id: "mum-powai", city: "Mumbai", name: "IIT Bombay & Powai Hub", shortName: "IIT Powai", priceMultiplier: 1.10, count: 1, icon: "graduation-cap" },
+    { id: "chn-vit", city: "Chennai / Vellore", name: "VIT & OMR Tech Corridor", shortName: "VIT Chennai", priceMultiplier: 0.92, count: 4, icon: "graduation-cap" },
+    { id: "manipal", city: "Manipal", name: "Manipal University Campus Hub", shortName: "Manipal Univ", priceMultiplier: 0.94, count: 3, icon: "graduation-cap" },
+    { id: "goa-bits", city: "Goa", name: "BITS Goa & Panjim Coastal Hub", shortName: "BITS Goa", priceMultiplier: 1.20, count: 5, icon: "palmtree" },
+    { id: "hyd-gachibowli", city: "Hyderabad", name: "IIIT / Gachibowli Univ Hub", shortName: "IIIT Gachibowli", priceMultiplier: 1.04, count: 5, icon: "graduation-cap" }
   ],
 
   promoCodes: [
@@ -199,7 +199,7 @@ const APP_DATA = {
       pricePerDay: 2399,
       rating: 4.88,
       tripsCount: 220,
-      image: "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=800&q=80",
+      image: "https://www.hyundai.com/content/dam/hyundai/in/en/data/find-a-car/Verna/verna-Innerkv-banner.jpg",
       features: ["High Mileage Diesel", "Heated/Cooled Seats", "Fastag Enabled", "Sporty Cockpit"],
       location: "Koramangala 5th Block • 0.8 km away",
       zeroDeposit: true,
@@ -273,7 +273,7 @@ const APP_DATA = {
       pricePerDay: 1699,
       rating: 4.82,
       tripsCount: 295,
-      image: "https://images.unsplash.com/photo-1619682817481-e994891cd1f5?auto=format&fit=crop&w=800&q=80",
+      image: "https://www.hyundai.com/content/dam/hyundai/in/en/data/find-a-car/i20/i20-des-banner.jpg",
       features: ["Smooth Automatic", "Wireless Phone Charger", "Bose 7-Speaker System", "Rear AC Vents"],
       location: "North Campus Metro Hub • 0.6 km away",
       zeroDeposit: true,
@@ -302,7 +302,7 @@ const APP_DATA = {
       location: "DU North Campus Vishwavidyalaya • 0.3 km away",
       zeroDeposit: true,
       badge: "Pocket Friendly 💸",
-      quickBubble: "💸 ₹1,349/day • 22 km/l • North Campus Ready",
+      quickBubble: "💸 22 km/l • North Campus Ready",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "Stereo with Aux" },
       desc: "The student classic for Murthal paratha runs at 2 AM. Reliable, punchy manual gearbox and dirt-cheap fuel spend."
     },
@@ -369,7 +369,7 @@ const APP_DATA = {
       pricePerDay: 2399,
       rating: 4.87,
       tripsCount: 280,
-      image: "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=800&q=80",
+      image: "https://www.hondacarindia.com/web-data/models/2026/carModel/City_model_desk_sept.jpg",
       features: ["Legendary i-DTEC Diesel", "Sunroof", "Cruise Control", "Super 25 km/l Mileage"],
       location: "Amity Gate 2 Noida • 0.4 km away",
       zeroDeposit: true,
@@ -424,7 +424,7 @@ const APP_DATA = {
       location: "FC Road Goodluck Cafe • 0.2 km away",
       zeroDeposit: true,
       badge: "Campus Favorite 🔥",
-      quickBubble: "🔥 ₹1,399/day • 22 km/l • FC Road Hub",
+      quickBubble: "🔥 22 km/l • FC Road Hub",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "6-Speaker Audio" },
       desc: "Lonavala sunrise drives made ultra affordable. Zip through western ghat roads with friends."
     },
@@ -570,7 +570,7 @@ const APP_DATA = {
       location: "NMIMS Vile Parle • 0.4 km away",
       zeroDeposit: true,
       badge: "City Runner ⚡",
-      quickBubble: "⚡ ₹1,449/day • Easy Parking • Great Mileage",
+      quickBubble: "⚡ Easy Parking • Great Mileage",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "6-Speaker Audio" },
       desc: "Nimble city runner that slips into tiny Mumbai parking slots with zero effort."
     },
@@ -663,7 +663,7 @@ const APP_DATA = {
       pricePerDay: 2399,
       rating: 4.86,
       tripsCount: 180,
-      image: "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=800&q=80",
+      image: "https://www.hyundai.com/content/dam/hyundai/in/en/data/find-a-car/Verna/verna-Innerkv-banner.jpg",
       features: ["High Torque Diesel", "Bose Audio", "Chilled Seats", "Fastag"],
       location: "OMR Sholinganallur • 0.9 km away",
       zeroDeposit: true,
@@ -718,7 +718,7 @@ const APP_DATA = {
       location: "Tiger Circle Manipal • 0.3 km away",
       zeroDeposit: true,
       badge: "Student Saver 💸",
-      quickBubble: "💸 ₹1,399/day • Easy Student Booking",
+      quickBubble: "💸 Easy Student Booking",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "Stereo System" },
       desc: "Pocket-friendly rides for late-night food runs to Udupi and beach sunsets."
     },
@@ -816,7 +816,7 @@ const APP_DATA = {
       location: "BITS Goa Campus Gate • 0.4 km away",
       zeroDeposit: true,
       badge: "Budget Explorer 💸",
-      quickBubble: "💸 ₹1,499/day • Super Low Fuel Spend",
+      quickBubble: "💸 Super Low Fuel Spend",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "Stereo Sound" },
       desc: "Affordable Goa exploring for student budgets. Fits in narrow village lanes with ease."
     },
@@ -914,7 +914,7 @@ const APP_DATA = {
       location: "Gachibowli Stadium Hub • 0.6 km away",
       zeroDeposit: true,
       badge: "Biryani Night Runner ⚡",
-      quickBubble: "⚡ ₹1,399/day • Midnight Biryani Special",
+      quickBubble: "⚡ Midnight Biryani Special",
       specs: { mileage: "22.5 km/l", boot: "268 Litres", speed: "165 km/h", sound: "6-Speaker Audio" },
       desc: "Midnight drives to Charminar and late-night biryani spots made pocket-friendly."
     },
@@ -1043,7 +1043,7 @@ const APP_DATA = {
       car: "Mahindra Thar 4x4",
       trip: "Goa Semester Break",
       rating: 5,
-      comment: "Split the Thar with 4 hostel wingmates — the demo came to about ₹750 each per day! Bluetooth connected instantly, and the prototype showed a zero-deposit concept with my student ID."
+      comment: "Split the 4-seat Thar with hostel wingmates — Bluetooth connected instantly, and the prototype showed a zero-deposit concept with my student ID."
     },
     {
       name: "Sneha Nair",

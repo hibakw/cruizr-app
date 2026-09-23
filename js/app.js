@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
               <div>
                 <p class="text-white font-medium text-sm group-hover:text-[#FFE600] transition">${hub.name}</p>
-                <p class="text-gray-400 text-xs">${hub.city} • ${APP_DATA.cars.filter(c => c.city === hub.city).length} campus cars available</p>
+                <p class="text-gray-400 text-xs">${hub.city} • ${APP_DATA.cars.filter(c => c.hubId === hub.id).length} campus cars available</p>
               </div>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${isSelected ? 'bg-[#FFE600] text-black font-bold' : 'bg-gray-800/80 text-gray-300 border border-gray-700'}">
@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (state.activeTab === "night") {
             tabNote.innerHTML = "🌙 <strong>Midnight Special:</strong> 8:00 PM to 6:00 AM flat ₹499 pack active!";
           } else if (state.activeTab === "hourly") {
-            tabNote.innerHTML = "⏱️ <strong>Quick Bunk Mode:</strong> Hourly flex bookings starting @ ₹99/hr!";
+            tabNote.innerHTML = "⏱️ <strong>Quick Bunk Mode:</strong> Hourly flex bookings use the rate shown on each car!";
           } else if (state.activeTab === "semester") {
             tabNote.innerHTML = "🏖️ <strong>Semester Roadtrip:</strong> 30% OFF applied for multi-day trips!";
           } else {
@@ -797,14 +797,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (car.fuel.toLowerCase() !== state.filters.fuel.toLowerCase()) return false;
       }
 
-      // 5. Budget slider match
+      // 5. Top rated condition
+      if (state.filters.sortBy === "rating" && car.rating < 4.9) return false;
+
+      // 6. Budget slider match
       // (slider parked at its max means "no limit", so pricier hubs never hide cars)
       const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
       const budgetSlider = document.getElementById("price-range-slider");
       const sliderMax = budgetSlider ? parseInt(budgetSlider.max, 10) : 7000;
       if (state.filters.maxPrice < sliderMax && dailyPrice > state.filters.maxPrice) return false;
 
-      // 6. Squad size passenger filter (#16)
+      // 7. Squad size passenger filter (#16)
       if (state.squadFilterActive && car.seats < state.squadSize) {
         return false;
       }
@@ -845,16 +848,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Render Car Cards
     fleetGrid.innerHTML = filtered.map(car => {
-      const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
+      const dailyPrice = car.pricePerDay;
       const splitCost = Math.ceil(dailyPrice / state.squadSize);
-      const isLocalCity = (car.city === state.selectedCity);
+      const hub = APP_DATA.campusHubs.find(h => h.id === car.hubId);
+      const cardLocation = hub ? hub.name : car.city;
 
       return `
         <div class="car-card-container glass-card rounded-2xl border border-gray-800 hover:border-[#FFE600]/50 transition-all duration-300 flex flex-col group">
           <!-- Interactive Floating Hover Bubble -->
           <div class="info-bubble" aria-hidden="true">
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FFE600]"></i>
-            <span>${car.quickBubble}</span>
+            <span>${car.quickBubble} • ₹${dailyPrice.toLocaleString("en-IN")}/day</span>
           </div>
 
           <!-- Car Image Header -->
@@ -881,8 +885,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <!-- Location tag -->
             <div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-xs text-gray-300 z-10">
-              <span class="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded-md text-[11px] ${isLocalCity ? 'text-[#FFE600]' : 'text-gray-300'}">
-                <i data-lucide="map-pin" class="w-3 h-3 text-[#FFE600]"></i> ${isLocalCity ? car.location : `${car.city} Hub`}
+              <span class="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded-md text-[11px] text-[#FFE600]">
+                <i data-lucide="map-pin" class="w-3 h-3 text-[#FFE600]"></i> ${cardLocation}
               </span>
             </div>
           </div>
@@ -933,6 +937,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p class="text-[11px] text-[#FFE600] font-semibold flex items-center gap-1 mt-0.5">
                   <i data-lucide="users" class="w-3 h-3"></i> ₹${splitCost}/person (${state.squadSize} friends)
                 </p>
+                <p class="text-[11px] text-gray-400 font-medium mt-0.5">₹${car.pricePerHour}/hr</p>
               </div>
 
               <button type="button" class="book-now-btn px-4 py-2 rounded-xl bg-gradient-to-r from-[#FFE600] to-[#FF9900] text-[#07090E] font-extrabold text-sm hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/20 flex items-center gap-1.5" data-car-id="${car.id}" aria-label="Book ${car.name}">
@@ -1535,7 +1540,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalBody = document.getElementById("info-modal-body");
     if (!modal || !modalTitle || !modalBody) return;
 
-    const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
+    const dailyPrice = car.pricePerDay;
 
     modalTitle.textContent = `${car.name} (${car.year})`;
     modalBody.innerHTML = `
