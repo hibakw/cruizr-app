@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Help & Student Support Center | CRUIZR Self-Drive</title>
   <meta name="description" content="CRUIZR Student Help Center prototype: FAQs on keyless car unlock, split payments, deposit concepts, roadside SOS assistance, and booking support." />
+  <link rel="canonical" href="https://hibakw.github.io/cruizr-app/help.html" />
+  <meta name="theme-color" content="#07090E" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="CRUIZR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Help &amp; Student Support Center | CRUIZR Self-Drive" />
+  <meta property="og:description" content="CRUIZR Student Help Center prototype: FAQs on keyless car unlock, split payments, deposit concepts, roadside SOS assistance, and booking support." />
+  <meta property="og:url" content="https://hibakw.github.io/cruizr-app/help.html" />
+  <meta property="og:image" content="https://hibakw.github.io/cruizr-app/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="CRUIZR - campus wheels and self-drive road trips (student prototype)" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Help &amp; Student Support Center | CRUIZR Self-Drive" />
+  <meta name="twitter:description" content="CRUIZR Student Help Center prototype: FAQs on keyless car unlock, split payments, deposit concepts, roadside SOS assistance, and booking support." />
+  <meta name="twitter:image" content="https://hibakw.github.io/cruizr-app/assets/og-image.png" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,19 +47,24 @@
   </script>
 
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
 
   <!-- Google Fonts -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Custom Theme CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <script src="js/a11y.js" defer></script>
+  <script src="js/forms.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 </head>
 
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- =========================================================================
        NAVIGATION BAR
@@ -145,7 +167,7 @@
   <!-- =========================================================================
        MAIN CONTENT: FAQS & CATEGORIZED TOPICS
        ========================================================================= -->
-  <main class="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+  <main id="main-content" tabindex="-1" class="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
 
     <!-- Quick Emergency Callout -->
     <div id="roadside-sos" class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-transparent border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

@@ -1,0 +1,26 @@
+# Dependencies & build output
+node_modules/
+dist/
+build/
+
+# Environment / secrets
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors & tools
+.vscode/
+.idea/
+*.swp
+.antigravity/
+
+# Logs & temp
+*.log
+npm-debug.log*
+*.tmp
+lighthouse-report*.html
+lighthouse-report*.json

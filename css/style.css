@@ -1,7 +1,5 @@
 /* CRUIZR Custom Styling - Dark Cyber Yellow College Theme with Refined Animations */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 :root {
   --bg-primary: #07090E;
   --bg-secondary: #0D111A;
@@ -352,5 +350,54 @@ button:active {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Accessibility (#34) - visible keyboard focus, skip link, reduced motion
+   !important is needed so these win over Tailwind's focus:outline-none utility.
+   ========================================================================== */
+:focus-visible {
+  outline: 2px solid #FFE600 !important;
+  outline-offset: 2px !important;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  background: #FFE600;
+  color: #07090E;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+.skip-link:focus {
+  left: 8px;
+}
+
+main:focus {
+  outline: none !important;
+}
+
+/* Inline form errors (#35) */
+.field-error {
+  margin-top: 0.25rem;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fb7185;
+}
+.field-invalid {
+  border-color: #f43f5e !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

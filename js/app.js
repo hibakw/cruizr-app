@@ -1255,7 +1255,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="lg:col-span-7 space-y-5">
           <!-- Car Banner Card -->
           <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-900/80 border border-gray-800">
-            <img src="${car.image}" alt="${car.name}" class="w-24 h-20 rounded-xl object-cover" />
+            <img src="${car.image}" alt="${car.name}" class="w-24 h-20 rounded-xl object-cover" loading="lazy" decoding="async" />
             <div>
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-xs font-bold px-2 py-0.5 rounded bg-[#FFE600]/20 text-[#FFE600] border border-[#FFE600]/30">${car.categoryName}</span>
@@ -1544,7 +1544,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modalTitle.textContent = `${car.name} (${car.year})`;
     modalBody.innerHTML = `
-      <img src="${car.image}" alt="${car.name}" class="w-full h-44 rounded-2xl object-cover border border-gray-800 mb-2" />
+      <img src="${car.image}" alt="${car.name}" class="w-full h-44 rounded-2xl object-cover border border-gray-800 mb-2" loading="lazy" decoding="async" />
       <div class="p-3 rounded-xl bg-[#FFE600]/10 border border-[#FFE600]/30 text-xs font-bold text-[#FFE600] flex items-center gap-2">
         <i data-lucide="zap" class="w-4 h-4"></i>
         <span>${car.quickBubble}</span>
@@ -1690,7 +1690,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p class="text-xs text-gray-300 italic mb-4">"${rev.comment}"</p>
         </div>
         <div class="pt-3 border-t border-gray-800/80 flex items-center gap-3">
-          <img src="${rev.avatar}" alt="${rev.name}" class="w-10 h-10 rounded-full object-cover border border-[#FFE600]/40" />
+          <img src="${rev.avatar}" alt="${rev.name}" class="w-10 h-10 rounded-full object-cover border border-[#FFE600]/40" loading="lazy" decoding="async" />
           <div>
             <h3 class="text-xs font-bold text-white">${rev.name}</h3>
             <p class="text-[11px] text-[#FFE600] font-medium">${rev.college}</p>
@@ -2148,6 +2148,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!container) {
       container = document.createElement("div");
       container.id = "toast-container";
+      container.setAttribute("role", "status");
+      container.setAttribute("aria-live", "polite");
       document.body.appendChild(container);
     }
 

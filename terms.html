@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Terms & Privacy Policy | CRUIZR Self-Drive</title>
   <meta name="description" content="CRUIZR terms of use, privacy policy, user eligibility, security deposit guidelines, cancellation policies, and student data protection." />
+  <link rel="canonical" href="https://hibakw.github.io/cruizr-app/terms.html" />
+  <meta name="theme-color" content="#07090E" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="CRUIZR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Terms &amp; Privacy Policy | CRUIZR Self-Drive" />
+  <meta property="og:description" content="CRUIZR terms of use, privacy policy, user eligibility, security deposit guidelines, cancellation policies, and student data protection." />
+  <meta property="og:url" content="https://hibakw.github.io/cruizr-app/terms.html" />
+  <meta property="og:image" content="https://hibakw.github.io/cruizr-app/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="CRUIZR - campus wheels and self-drive road trips (student prototype)" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Terms &amp; Privacy Policy | CRUIZR Self-Drive" />
+  <meta name="twitter:description" content="CRUIZR terms of use, privacy policy, user eligibility, security deposit guidelines, cancellation policies, and student data protection." />
+  <meta name="twitter:image" content="https://hibakw.github.io/cruizr-app/assets/og-image.png" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,19 +47,24 @@
   </script>
 
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
 
   <!-- Google Fonts -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Custom Theme CSS -->
   <link rel="stylesheet" href="css/style.css" />
+  <script src="js/a11y.js" defer></script>
+  <script src="js/forms.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 </head>
 
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- =========================================================================
        NAVIGATION BAR
@@ -119,7 +141,7 @@
   <!-- =========================================================================
        CONTENT BODY WITH SIDEBAR
        ========================================================================= -->
-  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <main id="main-content" tabindex="-1" class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
 
       <!-- Sticky Quick Table of Contents -->
