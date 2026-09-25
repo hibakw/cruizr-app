@@ -66,6 +66,11 @@
 <body class="bg-[#07090E] text-gray-100 antialiased min-h-screen flex flex-col selection:bg-[#FFE600] selection:text-black">
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
+  <!-- Global Prototype Banner -->
+  <div class="w-full bg-[#FFE600]/10 border-b border-[#FFE600]/25 text-[#FFE600] text-[11px] font-semibold py-1.5 px-4 text-center">
+    ⚠️ <span>CRUIZR is a student-built prototype. Pricing, vehicle availability, insurance, support services, and other operational details shown are for demonstration purposes only.</span>
+  </div>
+
   <!-- =========================================================================
        1. NAVIGATION BAR
        ========================================================================= -->
@@ -219,18 +224,37 @@
 
           <!-- Booking Input Fields Grid -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mt-2">
-            
-            <!-- Campus / Pickup Location -->
-            <div class="md:col-span-5 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition cursor-pointer" id="hero-hub-picker-trigger">
-              <label for="hero-pickup-location" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 cursor-pointer">Pick-up Campus Hub / Zone</label>
+
+            <!-- Pickup Address -->
+            <div class="md:col-span-6 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition" id="hero-pickup-address-field">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <label for="hero-pickup-location" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pickup address</label>
+                <button id="hero-hub-picker-trigger" type="button" class="text-[10px] font-bold text-[#FFE600] hover:underline whitespace-nowrap">Choose hub</button>
+              </div>
               <div class="flex items-center gap-2">
                 <i data-lucide="map-pin" class="w-4 h-4 text-[#FFE600] flex-shrink-0"></i>
-                <input type="text" id="hero-pickup-location" value="Christ University & Koramangala Hub" readonly class="w-full bg-transparent text-sm font-bold text-white focus:outline-none cursor-pointer" />
+                <input type="text" id="hero-pickup-location" value="Christ University & Koramangala Hub" list="cruizr-address-suggestions" autocomplete="street-address" placeholder="Enter pickup address..." class="w-full bg-transparent text-sm font-bold text-white focus:outline-none" />
               </div>
+              <button id="use-my-location-btn" type="button" class="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold text-gray-400 hover:text-[#FFE600] transition">
+                <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i> Use my location
+              </button>
+              <p id="pickup-address-status" class="hidden text-[10px] mt-1 font-medium" aria-live="polite"></p>
             </div>
 
+            <!-- Drop-off Address -->
+            <div class="md:col-span-6 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition" id="hero-dropoff-address-field">
+              <label for="hero-dropoff-location" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Drop-off address</label>
+              <div class="flex items-center gap-2">
+                <i data-lucide="flag" class="w-4 h-4 text-[#FFE600] flex-shrink-0"></i>
+                <input type="text" id="hero-dropoff-location" value="" list="cruizr-address-suggestions" autocomplete="street-address" placeholder="Enter drop-off address..." class="w-full bg-transparent text-sm font-bold text-white focus:outline-none" />
+              </div>
+              <p id="dropoff-address-status" class="hidden text-[10px] mt-1 font-medium" aria-live="polite"></p>
+            </div>
+
+            <datalist id="cruizr-address-suggestions"></datalist>
+
             <!-- Trip Dates -->
-            <div class="md:col-span-4 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition">
+            <div class="md:col-span-9 p-3.5 rounded-2xl bg-gray-900/90 border border-gray-800 focus-within:border-[#FFE600] transition">
               <label for="trip-start-date" class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Dates (Fri 10:00 AM ➔ Sun 10:00 PM)</label>
               <div class="grid grid-cols-2 gap-2">
                 <div class="flex items-center gap-1">
@@ -242,6 +266,7 @@
                 </div>
               </div>
               <input type="hidden" id="hero-dates-input" value="This Weekend (2 Days)" />
+              <span id="hero-duration-badge" class="sr-only">2 Days</span>
               <p id="hero-date-error" class="hidden text-[10px] text-rose-400 mt-1 font-medium"></p>
             </div>
 
@@ -493,13 +518,13 @@
             <span class="text-gradient-lime">Estimate Your Monthly Host Payout</span>
           </h2>
           <p class="text-sm text-gray-400 leading-relaxed">
-            Turn your car into a passive income concept when you're sitting in class or during semester breaks. Illustrative insurance concept + keyless smart IoT demo, subject to applicable terms.
+            Turn your car into a passive income concept when you're sitting in class or during semester breaks. Insurance details shown on this student prototype are illustrative only and do not represent an actual CRUIZR insurance policy. Keyless smart IoT details are also a demonstration concept, subject to applicable terms.
           </p>
 
           <div class="grid grid-cols-2 gap-3 text-xs pt-2">
             <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
-              <p class="font-bold text-white">🛡️ Illustrative Insurance Concept</p>
-              <p class="text-[11px] text-gray-400 mt-0.5">Protection concept for hosts</p>
+              <p class="font-bold text-white">🛡️ Insurance Coverage — Demonstration Example</p>
+              <p class="text-[11px] text-gray-400 mt-0.5">Illustrative protection concept — not an actual insurance policy</p>
             </div>
             <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800">
               <p class="font-bold text-white">💸 Weekly UPI Payouts</p>
@@ -671,14 +696,17 @@
           </p>
 
           <!-- Interactive Waitlist Form -->
-          <form id="beta-waitlist-form" class="flex flex-col sm:flex-row gap-2 pt-2">
+          <form id="beta-waitlist-form" class="flex flex-col sm:flex-row gap-2 pt-2" novalidate>
             <label for="waitlist-email" class="sr-only">College Email or Phone</label>
             <input type="text" id="waitlist-email" placeholder="Enter your college email or mobile" required class="px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-xs text-white focus:outline-none focus:border-[#FFE600] flex-1" />
             <button type="submit" class="px-6 py-3 rounded-xl bg-[#FFE600] text-black font-extrabold text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition shadow-lg shadow-[#FFE600]/20 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i data-lucide="bell" class="w-3.5 h-3.5"></i> Get Notified
             </button>
           </form>
-          <p id="waitlist-success-msg" class="hidden text-xs text-amber-400 font-bold flex items-center gap-1">
+          <p id="waitlist-error-msg" class="hidden text-xs text-rose-400 font-medium flex items-center gap-1 mt-1">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span id="waitlist-error-text">Please enter a valid email or 10-digit phone number.</span>
+          </p>
+          <p id="waitlist-success-msg" class="hidden text-xs text-amber-400 font-bold flex items-center gap-1 mt-1">
             <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> You're on the VIP waitlist! We'll notify you as soon as the app drops.
           </p>
         </div>
@@ -686,7 +714,7 @@
         <!-- QR Code Container -->
         <div class="p-6 rounded-2xl bg-gray-900 border border-gray-800 text-center space-y-2 flex-shrink-0">
           <div class="w-32 h-32 bg-white p-2 rounded-xl mx-auto flex items-center justify-center">
-            <img src="assets/qr-preview.png" alt="QR code linking to the CRUIZR web app at hibakw.github.io/cruizr-app" width="112" height="112" loading="lazy" decoding="async" class="w-full h-full" />
+            <img src="assets/qr-preview.png" alt="Scan to Preview CRUIZR Web App on Mobile; QR code linking to the CRUIZR web app at hibakw.github.io/cruizr-app" width="112" height="112" loading="lazy" decoding="async" class="w-full h-full" />
           </div>
           <p class="text-[11px] font-bold text-gray-300">Scan to Open Web App</p>
           <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-500/30">iOS & Android Beta Soon</span>
@@ -714,7 +742,7 @@
             <span class="text-xl font-black tracking-wider text-white font-heading">CRUIZR</span>
           </div>
           <p class="text-xs text-gray-400 max-w-sm leading-relaxed">
-            CRUIZR is a student-built prototype for college mobility. Pricing, availability, deposits, protection, support, and other operational details are for demonstration purposes only.
+            CRUIZR is a student-built prototype for college mobility. Pricing, vehicle availability, deposits, protection, insurance, support, and other operational details are for demonstration purposes only; this website does not represent a registered commercial rental company.
           </p>
           <div class="flex items-center gap-3 text-gray-400">
             <!-- Instagram (Coming Soon) -->
@@ -790,7 +818,7 @@
       </div>
 
       <div class="pt-8 border-t border-gray-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
-        <p>© 2026 CRUIZR Technologies Inc. All rights reserved. Self-drive car rental platform for youth.</p>
+        <p>© 2026 CRUIZR — Student Project Prototype. All rights reserved. This website is an academic prototype and does not represent a registered commercial rental company.</p>
         <p class="flex items-center gap-1">Made with ⚡ for college roadtrippers.</p>
       </div>
 

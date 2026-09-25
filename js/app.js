@@ -7,7 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedCity: "Bangalore",
     selectedHub: "Christ University & Koramangala Hub",
     selectedHubId: "blr-christ",
+    pickupHubId: "blr-christ",
     hubMultiplier: 1.0,
+
+    // Free-form trip addresses (hub selection remains the availability source)
+    pickupAddress: "Christ University & Koramangala Hub",
+    dropoffAddress: "",
+    pickupCoordinates: null,
+    dropoffCoordinates: null,
 
     // Dates & Duration
     startDate: getDefaultStartDate(),
@@ -39,6 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Booking Details (synced with state)
     bookingDetails: {
       pickupLocation: "Christ University & Koramangala Hub",
+      pickupAddress: "Christ University & Koramangala Hub",
+      dropoffAddress: "",
+      pickupCoordinates: null,
+      dropoffCoordinates: null,
       pickupDate: formatDateHuman(getDefaultStartDate()),
       pickupTime: formatTimeHuman(getDefaultStartDate()),
       dropDate: formatDateHuman(getDefaultEndDate()),
@@ -68,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.validateSplitInputs = validateSplitInputs;
 
   const MAX_TRIP_DAYS = 30; // longest trip allowed (dates + split calculator)
+  const REVERSE_GEOCODING_ENDPOINT = "https://nominatim.openstreetmap.org/reverse";
 
   // Initial Boot
   initAuth();
@@ -128,7 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const heroLocationInput = document.getElementById("hero-pickup-location");
     if (heroLocationInput) {
-      heroLocationInput.value = state.selectedHub;
+      heroLocationInput.value = state.pickupAddress;
+    }
+    const heroDropoffInput = document.getElementById("hero-dropoff-location");
+    if (heroDropoffInput && heroDropoffInput.value !== state.dropoffAddress) {
+      heroDropoffInput.value = state.dropoffAddress;
     }
 
     // 2. Dates display & duration badge
@@ -413,7 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
               <div>
                 <p class="text-white font-medium text-sm group-hover:text-[#FFE600] transition">${hub.name}</p>
-                <p class="text-gray-400 text-xs">${hub.city} • ${APP_DATA.cars.filter(c => c.hubId === hub.id).length} campus cars available</p>
+                <p class="text-gray-400 text-xs">${hub.city} • ${APP_DATA.cars.filter(c => c.hubId === hub.id).length} at this hub / ${APP_DATA.cars.filter(c => c.city === hub.city).length} in city</p>
               </div>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${isSelected ? 'bg-[#FFE600] text-black font-bold' : 'bg-gray-800/80 text-gray-300 border border-gray-700'}">
@@ -499,8 +515,13 @@ document.addEventListener("DOMContentLoaded", () => {
     state.selectedCity = city;
     state.selectedHub = name;
     state.selectedHubId = id;
+    state.pickupHubId = id;
     state.hubMultiplier = multiplier;
+    state.pickupAddress = name;
+    state.pickupCoordinates = null;
     state.bookingDetails.pickupLocation = name;
+    state.bookingDetails.pickupAddress = name;
+    state.bookingDetails.pickupCoordinates = null;
 
     // Reset selectedCar if it doesn't belong to the new city
     if (state.selectedCar && state.selectedCar.city !== city) {
@@ -622,7 +643,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (state.activeTab === "night") {
             tabNote.innerHTML = "🌙 <strong>Midnight Special:</strong> 8:00 PM to 6:00 AM flat ₹499 pack active!";
           } else if (state.activeTab === "hourly") {
-            tabNote.innerHTML = "⏱️ <strong>Quick Bunk Mode:</strong> Hourly flex bookings use the rate shown on each car!";
+            tabNote.innerHTML = "⏱️ <strong>Quick Bunk Mode:</strong> Hourly flex bookings use the rate shown on each car, starting @ ₹99/hr!";
           } else if (state.activeTab === "semester") {
             tabNote.innerHTML = "🏖️ <strong>Semester Roadtrip:</strong> 30% OFF applied for multi-day trips!";
           } else {
@@ -640,9 +661,33 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    initAddressWorkflow();
+
     const heroSearchBtn = document.getElementById("hero-search-btn");
     if (heroSearchBtn) {
       heroSearchBtn.addEventListener("click", () => {
+        const pickupInput = document.getElementById("hero-pickup-location");
+        const dropoffInput = document.getElementById("hero-dropoff-location");
+        const pickupAddress = pickupInput ? pickupInput.value.trim() : state.pickupAddress.trim();
+        const dropoffAddress = dropoffInput ? dropoffInput.value.trim() : state.dropoffAddress.trim();
+
+        if (!pickupAddress) {
+          setAddressStatus("pickup", "Enter a pickup address or use your current location first.", "error");
+          pickupInput?.focus();
+          return;
+        }
+        if (!dropoffAddress) {
+          setAddressStatus("dropoff", "Enter a drop-off address to continue.", "error");
+          dropoffInput?.focus();
+          return;
+        }
+
+        state.pickupAddress = pickupAddress;
+        state.dropoffAddress = dropoffAddress;
+        state.bookingDetails.pickupAddress = pickupAddress;
+        state.bookingDetails.dropoffAddress = dropoffAddress;
+        setAddressStatus("pickup", getPickupMappingMessage(), "info");
+        setAddressStatus("dropoff", "Drop-off address saved for this trip.", "info");
         const fleetSection = document.getElementById("fleet-section");
         if (fleetSection) {
           fleetSection.scrollIntoView({ behavior: "smooth" });
@@ -650,6 +695,141 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     }
+  }
+
+  function initAddressWorkflow() {
+    const pickupInput = document.getElementById("hero-pickup-location");
+    const dropoffInput = document.getElementById("hero-dropoff-location");
+    const useLocationBtn = document.getElementById("use-my-location-btn");
+    const suggestions = document.getElementById("cruizr-address-suggestions");
+
+    if (suggestions) {
+      const suggestionValues = APP_DATA.campusHubs.flatMap(hub => [hub.name, hub.city]);
+      suggestions.innerHTML = [...new Set(suggestionValues)].map(value => `<option value="${value}"></option>`).join("");
+    }
+
+    pickupInput?.addEventListener("input", () => {
+      state.pickupAddress = pickupInput.value;
+      state.pickupCoordinates = null;
+      state.bookingDetails.pickupAddress = state.pickupAddress;
+      state.bookingDetails.pickupCoordinates = null;
+      setAddressStatus("pickup", "", "info");
+      mapAddressToHub(state.pickupAddress);
+    });
+
+    dropoffInput?.addEventListener("input", () => {
+      state.dropoffAddress = dropoffInput.value;
+      state.dropoffCoordinates = null;
+      state.bookingDetails.dropoffAddress = state.dropoffAddress;
+      state.bookingDetails.dropoffCoordinates = null;
+      setAddressStatus("dropoff", "", "info");
+    });
+
+    useLocationBtn?.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        setAddressStatus("pickup", "Location detection is not available in this browser. Type your pickup address instead.", "error");
+        return;
+      }
+
+      useLocationBtn.disabled = true;
+      setAddressStatus("pickup", "Requesting your location...", "info");
+      navigator.geolocation.getCurrentPosition(position => {
+        state.pickupCoordinates = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        };
+        state.bookingDetails.pickupCoordinates = state.pickupCoordinates;
+        state.pickupAddress = "";
+        state.bookingDetails.pickupAddress = "";
+        if (pickupInput) pickupInput.value = "";
+        setAddressStatus("pickup", "Current location detected. Looking up the readable address...", "info");
+        reverseGeocodePickup(position.coords).finally(() => {
+          useLocationBtn.disabled = false;
+        });
+      }, error => {
+        const messages = {
+          1: "Location permission was denied. Type your pickup address instead.",
+          2: "Your location could not be determined. Type your pickup address instead.",
+          3: "Location detection timed out. Type your pickup address instead."
+        };
+        setAddressStatus("pickup", messages[error.code] || "Location detection failed. Type your pickup address instead.", "error");
+        useLocationBtn.disabled = false;
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
+    });
+  }
+
+  async function reverseGeocodePickup(coords) {
+    const params = new URLSearchParams({
+      format: "jsonv2",
+      lat: String(coords.latitude),
+      lon: String(coords.longitude),
+      zoom: "18",
+      addressdetails: "1",
+      "accept-language": "en"
+    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(`${REVERSE_GEOCODING_ENDPOINT}?${params.toString()}`, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`Reverse geocoding returned ${response.status}`);
+
+      const result = await response.json();
+      const readableAddress = typeof result.display_name === "string" ? result.display_name.trim() : "";
+      if (!readableAddress) throw new Error("Reverse geocoder returned no readable address");
+
+      state.pickupAddress = readableAddress;
+      state.bookingDetails.pickupAddress = readableAddress;
+      const pickupInput = document.getElementById("hero-pickup-location");
+      if (pickupInput) pickupInput.value = readableAddress;
+      setAddressStatus("pickup", "Pickup address detected via OpenStreetMap. You can edit it before searching. © OpenStreetMap contributors", "success");
+      mapAddressToHub(readableAddress);
+    } catch (error) {
+      console.warn("Reverse geocoding failed", error);
+      setAddressStatus("pickup", "Location detected, but the readable address could not be found. Enter your pickup address manually.", "error");
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  function mapAddressToHub(address) {
+    const normalized = address.toLowerCase();
+    if (!normalized) return;
+
+    const match = APP_DATA.campusHubs.find(hub => [hub.name, hub.shortName, hub.city]
+      .filter(Boolean)
+      .some(value => normalized.includes(value.toLowerCase())));
+    if (!match || match.id === state.selectedHubId) return;
+
+    state.selectedCity = match.city;
+    state.selectedHub = match.name;
+    state.selectedHubId = match.id;
+    state.pickupHubId = match.id;
+    state.hubMultiplier = match.priceMultiplier || 1.0;
+    state.bookingDetails.pickupLocation = match.name;
+    setAddressStatus("pickup", `Mapped to the ${match.shortName || match.name} hub. Fleet availability uses this supported hub.`, "success");
+    syncAndRenderAll();
+  }
+
+  function getPickupMappingMessage() {
+    const hub = APP_DATA.campusHubs.find(item => item.id === state.selectedHubId);
+    return hub ? `Pickup address saved. Showing availability from the supported ${hub.shortName || hub.name} hub.` : "Pickup address saved; hub mapping is still required.";
+  }
+
+  function setAddressStatus(type, message, statusType) {
+    const element = document.getElementById(`${type}-address-status`);
+    if (!element) return;
+    element.textContent = message;
+    element.classList.toggle("hidden", !message);
+    element.classList.remove("text-rose-400", "text-amber-300", "text-[#FFE600]");
+    if (statusType === "error") element.classList.add("text-rose-400");
+    else if (statusType === "success") element.classList.add("text-amber-300");
+    else element.classList.add("text-[#FFE600]");
   }
 
   /* ==========================================================================
@@ -848,22 +1028,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Render Car Cards
     fleetGrid.innerHTML = filtered.map(car => {
-      const dailyPrice = car.pricePerDay;
+      const dailyPrice = Math.round(car.pricePerDay * state.hubMultiplier);
       const splitCost = Math.ceil(dailyPrice / state.squadSize);
       const hub = APP_DATA.campusHubs.find(h => h.id === car.hubId);
       const cardLocation = hub ? hub.name : car.city;
+      const quickBubble = car.quickBubble.includes("₹") ? car.quickBubble : `${car.quickBubble} • ₹${dailyPrice.toLocaleString("en-IN")}/day`;
+      const primaryImage = getLocalCarImage(car);
 
       return `
         <div class="car-card-container glass-card rounded-2xl border border-gray-800 hover:border-[#FFE600]/50 transition-all duration-300 flex flex-col group">
           <!-- Interactive Floating Hover Bubble -->
           <div class="info-bubble" aria-hidden="true">
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FFE600]"></i>
-            <span>${car.quickBubble} • ₹${dailyPrice.toLocaleString("en-IN")}/day</span>
+            <span>${quickBubble}</span>
           </div>
 
           <!-- Car Image Header -->
           <div class="relative h-48 overflow-hidden bg-gray-900">
-            <img src="${car.image}" alt="${car.name} self-drive car" class="w-full h-full object-cover group-hover:scale-108 transition duration-500" loading="lazy" />
+            <img src="${primaryImage}" alt="${car.name} self-drive car" class="w-full h-full object-cover group-hover:scale-108 transition duration-500" loading="lazy" />
             <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-transparent to-transparent"></div>
             
             <!-- Badges -->
@@ -886,7 +1068,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- Location tag -->
             <div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-xs text-gray-300 z-10">
               <span class="flex items-center gap-1 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded-md text-[11px] text-[#FFE600]">
-                <i data-lucide="map-pin" class="w-3 h-3 text-[#FFE600]"></i> ${cardLocation}
+                <i data-lucide="map-pin" class="w-3 h-3 text-[#FFE600]"></i> ${cardLocation} • ${car.location}
               </span>
             </div>
           </div>
@@ -965,6 +1147,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     lucide.createIcons();
+  }
+
+  function getLocalCarImage(car) {
+    const name = String(car.name || "").toLowerCase();
+    if (name.includes("swift")) return "assets/cars/Maruti Suzuki Swift/Maruti Suzuki Swift.jpg";
+    if (name.includes("thar")) return "assets/cars/Mahindra Thar 4x4 Hard-Top/Mahindra Thar 4x4 Hard-Top.jpg";
+    if (name.includes("creta")) return "assets/cars/Hyundai Creta SX Turbo/Hyundai Creta SX Turbo.jpg";
+    if (name.includes("virtus")) return "assets/cars/Volkswagen Virtus GT/Volkswagen Virtus GT.png";
+    if (name.includes("punch")) return "assets/cars/Tata Punch/Tata Punch.jpg";
+    if (name.includes("i20")) return "assets/cars/Hyundai i20/Hyundai i20.jpg";
+    if (name.includes("verna")) return "assets/cars/Hyundai Verna SX CRDi/Hyundai Verna SX CRDi.jpg";
+    if (name.includes("nexon")) return "assets/cars/Tata Nexon EV Max/Tata Nexon EV Max.jpg";
+    return car.image;
   }
 
   function formatBudgetLabel(value, sliderEl) {
@@ -1255,7 +1450,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="lg:col-span-7 space-y-5">
           <!-- Car Banner Card -->
           <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-900/80 border border-gray-800">
-            <img src="${car.image}" alt="${car.name}" class="w-24 h-20 rounded-xl object-cover" loading="lazy" decoding="async" />
+            <img src="${getLocalCarImage(car)}" alt="${car.name}" class="w-24 h-20 rounded-xl object-cover" loading="lazy" decoding="async" />
             <div>
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-xs font-bold px-2 py-0.5 rounded bg-[#FFE600]/20 text-[#FFE600] border border-[#FFE600]/30">${car.categoryName}</span>
@@ -1486,7 +1681,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="grid grid-cols-2 gap-2 text-xs">
             <div>
               <p class="text-[10px] text-gray-400">PICKUP LOCATION</p>
-              <p class="font-medium text-white">${state.selectedHub}</p>
+              <p class="font-medium text-white">${state.pickupAddress || state.selectedHub}</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-gray-400">DROP-OFF LOCATION</p>
+              <p class="font-medium text-white">${state.dropoffAddress || "Address confirmed at search"}</p>
             </div>
             <div>
               <p class="text-[10px] text-gray-400">PER FRIEND SHARE</p>
@@ -1544,7 +1743,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modalTitle.textContent = `${car.name} (${car.year})`;
     modalBody.innerHTML = `
-      <img src="${car.image}" alt="${car.name}" class="w-full h-44 rounded-2xl object-cover border border-gray-800 mb-2" loading="lazy" decoding="async" />
+      <img src="${getLocalCarImage(car)}" alt="${car.name}" class="w-full h-44 rounded-2xl object-cover border border-gray-800 mb-2" loading="lazy" decoding="async" />
       <div class="p-3 rounded-xl bg-[#FFE600]/10 border border-[#FFE600]/30 text-xs font-bold text-[#FFE600] flex items-center gap-2">
         <i data-lucide="zap" class="w-4 h-4"></i>
         <span>${car.quickBubble}</span>
@@ -1742,12 +1941,54 @@ document.addEventListener("DOMContentLoaded", () => {
     const waitlistForm = document.getElementById("beta-waitlist-form");
     const waitlistInput = document.getElementById("waitlist-email");
     const successMsg = document.getElementById("waitlist-success-msg");
+    const errorMsg = document.getElementById("waitlist-error-msg");
+    const errorText = document.getElementById("waitlist-error-text");
+
+    function showError(msg) {
+      if (successMsg) successMsg.classList.add("hidden");
+      if (errorText) errorText.textContent = msg;
+      if (errorMsg) errorMsg.classList.remove("hidden");
+      if (waitlistInput) {
+        waitlistInput.classList.add("border-rose-500");
+        waitlistInput.focus();
+      }
+    }
+
+    function clearError() {
+      if (errorMsg) errorMsg.classList.add("hidden");
+      if (waitlistInput) waitlistInput.classList.remove("border-rose-500");
+    }
 
     if (waitlistForm && waitlistInput) {
+      waitlistInput.addEventListener("input", clearError);
       waitlistForm.addEventListener("submit", (e) => {
         e.preventDefault();
+        clearError();
         const val = waitlistInput.value.trim();
-        if (!val) return;
+        if (!val) {
+          showError("Please enter your college email or 10-digit mobile number.");
+          return;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneDigits = val.replace(/[\s\-\(\)\+]/g, "");
+        if (val.includes("@") || /[a-zA-Z]/.test(val)) {
+          if (!emailPattern.test(val)) {
+            showError("Please enter a valid email address (e.g. yourname@college.edu).");
+            return;
+          }
+        } else {
+          if (phoneDigits.length !== 10) {
+            showError("Mobile number must be exactly 10 digits.");
+            return;
+          }
+          if (!/^[6-9]/.test(phoneDigits)) {
+            showError("Invalid mobile number. Indian mobile numbers must start with 6, 7, 8, or 9.");
+            return;
+          }
+        }
+
+        clearError();
         if (successMsg) successMsg.classList.remove("hidden");
         waitlistForm.reset();
         showToast("🚀 You're on the CRUIZR Mobile App VIP Beta Waitlist!", "success");
@@ -1825,7 +2066,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2 my-2">
             <p>• <strong>Flat Tyre & Battery Jumpstart:</strong> 30-45 minute dispatch anywhere on major highways.</p>
             <p>• <strong>Towing & Replacement Car:</strong> Instant vehicle replacement if mechanical breakdown occurs.</p>
-            <p>• <strong>Toll-Free Helpline:</strong> +91 1800-CRUIZR (24x7 Active)</p>
+            <p>• <strong>Toll-Free Helpline:</strong> +91 1800-CRUIZR (prototype demo only; not a real emergency line)</p>
           </div>
         `);
       });
@@ -1869,9 +2110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         openInfo("💬 Student Help & Support", `
           <p>Have questions about your booking, keyless unlock, or student verification?</p>
           <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2 my-2">
-            <p>• <strong>WhatsApp Support:</strong> +91 98765 CRZ-HELP (Instant response)</p>
-            <p>• <strong>Email Support:</strong> help@cruizr.app</p>
-            <p>• <strong>Campus Help Desks:</strong> Available at major university partner gates.</p>
+            <p>• <strong>WhatsApp Support:</strong> +91 98765 CRZ-HELP (prototype demo; not a real emergency support service)</p>
+            <p>• <strong>Email Support:</strong> help@cruizr.app (prototype contact; not a live CRUIZR support address)</p>
+            <p>• <strong>Campus Help Desks:</strong> Planned demonstration feature, not currently operational.</p>
           </div>
         `);
       });
