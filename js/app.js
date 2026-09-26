@@ -261,13 +261,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const phoneVal = phoneInput ? phoneInput.value : "9876543210";
+        const nameInput = document.getElementById("auth-name-input");
+        const enteredName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Student";
         const dummyUser = {
-          name: "Alex Verma",
+          name: enteredName,
           phone: `+91 ${phoneVal}`,
-          email: "alex.v@christuniversity.in",
+          email: `${enteredName.toLowerCase().replace(/\s+/g, ".")}@student.edu`,
           college: state.selectedHub.split("&")[0].trim(),
           verifiedStudent: true,
-          avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80"
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(enteredName)}&background=FFE600&color=07090E&bold=true&size=150`
         };
 
         saveAuth({ isLoggedIn: true, user: dummyUser });
@@ -275,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         step2.classList.add("hidden");
         step1.classList.remove("hidden");
         clearInterval(state.otpTimer);
-        showToast("🎉 Verified & Logged in as Student (25% Discount Active)", "success");
+        showToast(`🎉 Verified & Logged in as Student (25% Discount Active)`, "success");
       });
     }
 
@@ -283,17 +285,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const googleBtn = document.getElementById("auth-google-btn");
     if (googleBtn) {
       googleBtn.addEventListener("click", () => {
+        const nameInput = document.getElementById("auth-name-input");
+        const enteredName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Student";
+        const phoneInput2 = document.getElementById("auth-phone-input");
+        const phoneVal = phoneInput2 && phoneInput2.value.trim() ? phoneInput2.value.trim() : "";
         const dummyUser = {
-          name: "Alex Verma",
-          phone: "+91 98765 43210",
-          email: "alex.v@christuniversity.in",
+          name: enteredName,
+          phone: phoneVal ? `+91 ${phoneVal}` : "",
+          email: `${enteredName.toLowerCase().replace(/\s+/g, ".")}@student.edu`,
           college: state.selectedHub.split("&")[0].trim(),
           verifiedStudent: true,
-          avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80"
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(enteredName)}&background=FFE600&color=07090E&bold=true&size=150`
         };
         saveAuth({ isLoggedIn: true, user: dummyUser });
         document.getElementById("login-modal")?.classList.add("hidden");
-        showToast("🎉 Signed in with College Email (Alex Verma)", "success");
+        showToast(`🎉 Signed in as ${enteredName} (25% Discount Active)`, "success");
       });
     }
   }
@@ -2395,25 +2401,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const toast = document.createElement("div");
-    toast.className = "toast";
+    toast.className = `toast toast-${type}`;
     
     let icon = "info";
     if (type === "success") icon = "check-circle";
     if (type === "error") icon = "alert-triangle";
 
     toast.innerHTML = `
-      <i data-lucide="${icon}" class="w-4 h-4 ${type === 'success' ? 'text-[#FFE600]' : (type === 'error' ? 'text-rose-400' : 'text-[#FFE600]')} flex-shrink-0"></i>
-      <span class="flex-1">${message}</span>
+      <div class="toast-road" aria-hidden="true"></div>
+      <div class="toast-car" aria-hidden="true">
+        <i data-lucide="car-front" class="w-7 h-7"></i>
+      </div>
+      <div class="toast-banner">
+        <i data-lucide="${icon}" class="toast-status-icon ${type === 'success' ? 'text-[#FFE600]' : (type === 'error' ? 'text-rose-400' : 'text-[#FFE600]')}" aria-hidden="true"></i>
+        <span class="toast-message">${message}</span>
+      </div>
     `;
 
     container.appendChild(toast);
     lucide.createIcons();
 
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateX(100%)";
-      toast.style.transition = "all 0.3s ease";
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    setTimeout(() => toast.remove(), 5000);
   }
 });

@@ -313,43 +313,145 @@ button:active {
   transform: scale(0.96);
 }
 
-/* Toast styling */
+/* Driving notification banner */
 #toast-container {
   position: fixed;
+  left: 50%;
   bottom: 24px;
-  right: 24px;
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
   pointer-events: none;
+  width: min(100%, 620px);
+  transform: translateX(-50%);
+  padding: 0 16px;
 }
 
 .toast {
+  position: relative;
   pointer-events: auto;
-  min-width: 280px;
-  max-width: 380px;
-  background: #111726;
-  border: 1px solid rgba(255, 230, 0, 0.4);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
-  padding: 14px 18px;
+  width: min(100%, 560px);
+  min-height: 58px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #FFFFFF;
-  font-size: 14px;
-  animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  padding: 6px 0;
+  isolation: isolate;
+  animation: driving-banner 5s cubic-bezier(0.22, 0.75, 0.25, 1) forwards;
 }
 
-@keyframes slide-in {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+.toast-road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 230, 0, 0.55) 0 22px, transparent 22px 40px);
+  opacity: 0.55;
+  z-index: -1;
+}
+
+.toast-car {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 54px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #07090E;
+  background: linear-gradient(135deg, #FFE600, #FF9900);
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  border-radius: 16px 12px 9px 9px;
+  box-shadow: 0 8px 22px rgba(255, 230, 0, 0.32);
+  margin-right: -10px;
+}
+
+.toast-car::before,
+.toast-car::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #07090E;
+  border-radius: 50%;
+  background: #687386;
+}
+
+.toast-car::before { left: 8px; }
+.toast-car::after { right: 8px; }
+
+.toast-banner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 22px;
+  background: rgba(17, 23, 38, 0.96);
+  border: 1px solid rgba(255, 230, 0, 0.42);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border-radius: 10px 18px 18px 10px;
+  color: #FFFFFF;
+  font-size: 13px;
+  line-height: 1.35;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.toast-status-icon {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.toast-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@keyframes driving-banner {
+  0% { opacity: 0; transform: translateX(-120vw); }
+  13%, 76% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(120vw); }
+}
+
+@media (max-width: 640px) {
+  #toast-container {
+    bottom: 16px;
+    padding: 0 12px;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+
+  .toast {
+    min-height: 52px;
+  }
+
+  .toast-car {
+    flex-basis: 46px;
+    width: 46px;
+    height: 40px;
+  }
+
+  .toast-car .lucide {
+    width: 23px;
+    height: 23px;
+  }
+
+  .toast-banner {
+    min-height: 40px;
+    padding: 8px 11px 8px 17px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
   }
 }
 
