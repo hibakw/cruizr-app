@@ -197,18 +197,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const step2 = document.getElementById("auth-form-step-2");
     const phoneDisplay = document.getElementById("otp-phone-display");
 
+    // Pre-fill name from saved auth when modal opens (returning user)
+    document.querySelectorAll(".open-login-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const nameField = document.getElementById("auth-name-input");
+        if (nameField && state.auth && state.auth.user && state.auth.user.name && state.auth.user.name !== "Student") {
+          nameField.value = state.auth.user.name;
+        }
+      });
+    });
+
     if (sendOtpBtn && phoneInput) {
       sendOtpBtn.addEventListener("click", () => {
+        const nameField = document.getElementById("auth-name-input");
+        const nameVal = nameField ? nameField.value.trim() : "";
+        if (!nameVal) {
+          showToast("\u26a0\ufe0f Please enter your full name", "error");
+          if (nameField) nameField.focus();
+          return;
+        }
         const val = phoneInput.value.trim();
         if (val.length < 10) {
-          showToast("⚠️ Please enter a valid 10-digit mobile number", "error");
+          showToast("\u26a0\ufe0f Please enter a valid 10-digit mobile number", "error");
           return;
         }
         if (phoneDisplay) phoneDisplay.textContent = `+91 ${val}`;
         step1.classList.add("hidden");
         step2.classList.remove("hidden");
         startOtpTimer();
-        showToast("📩 OTP code sent to your mobile: 123456", "success");
+        showToast("\ud83d\udce9 OTP code sent to your mobile: 123456", "success");
       });
     }
 
@@ -406,6 +423,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".open-login-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.getElementById("login-modal")?.classList.remove("hidden");
+        // Pre-fill name for returning user
+        const nameField = document.getElementById("auth-name-input");
+        if (nameField && state.auth && state.auth.user && state.auth.user.name && state.auth.user.name !== "Student") {
+          nameField.value = state.auth.user.name;
+        }
       });
     });
 
